@@ -4,7 +4,7 @@ version = "0.1.0"
 description = "Automatic speech recognition with pytorch for SWR2"
 authors = ["Philipp Merkel <philippmerkel@outlook.com>", "Marvin Borner <git@marvinborner.de>", "Valentin Schmidt <>", "Silja Kasper <>"]
 license = "MIT"
-readme = "README.md"
+readme = "readme.md"
 packages = [{include = "swr2_asr"}]
 
 [tool.poetry.dependencies]
