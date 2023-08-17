@@ -1,0 +1,9 @@
+{
+    "[python]": {
+        "editor.formatOnType": true,
+        "editor.defaultFormatter": "ms-python.black-formatter",
+        "editor.formatOnSave": true,
+        "editor.rulers": [80, 120],
+    },
+    "black-formatter.importStrategy": "fromEnvironment",
+}
