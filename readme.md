@@ -41,10 +41,7 @@ Train using the provided train script:
 
 ## CI
 
-To run the CI manually and not only on GitHub Actions, run
-`poetry run ./ci.sh`.
-
-Alternatively, you can use the Makefile to run these commands manually
+You can use the Makefile to run these commands manually
 
     make format
 
