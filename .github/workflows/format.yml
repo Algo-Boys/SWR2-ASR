@@ -23,4 +23,4 @@ jobs:
         poetry lock && poetry install --with cpu
     - name: Run CI
       run: |
-        poetry lint
+        make lint
