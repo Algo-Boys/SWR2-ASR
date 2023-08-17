@@ -2,6 +2,19 @@
 Automatic speech recognition model for the seminar spoken word recogniton 2 (SWR2) in the summer term 2023.
 
 # Installation
+## Installing poetry
+```
+// installing poetry with the provided install script
+curl -sSL https://install.python-poetry.org | python3 -
+
+// adding poetry to your path
+// Linux
+echo export PATH="$HOME/.local/bin:$PATH" >> ~/.bashrc && source ~/.bashrc
+
+// Mac
+echo export PATH="$HOME/.local/bin:$PATH" >> ~/.zshrc && source ~/.zshrc
+```
+
 ## Running on cpu or m1 gpu
 ```
 poetry lock && poetry install --with cpu
