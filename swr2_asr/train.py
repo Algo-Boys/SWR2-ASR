@@ -7,7 +7,9 @@ from AudioLoader.speech.mls import MultilingualLibriSpeech
 
 
 def main():
-    dataset = MultilingualLibriSpeech("./data", "mls_german_opus", "dev", download=True)
+    dataset = MultilingualLibriSpeech(
+        "data", "mls_polish_opus", split="train", download=True
+    )
 
     print(dataset[1])
 
