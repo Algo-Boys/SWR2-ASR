@@ -1,6 +1,6 @@
 """Training script for the ASR model."""
-from AudioLoader.speech.mls import MultilingualLibriSpeech
 import os
+from AudioLoader.speech.mls import MultilingualLibriSpeech
 
 
 def main() -> None:
