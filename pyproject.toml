@@ -11,13 +11,10 @@ packages = [{include = "swr2_asr"}]
 python = "^3.10"
 numpy = "^1.25.2"
 click = "^8.1.6"
-
-[tool.poetry.group.cpu]
-optional = true
-
-[tool.poetry.group.cpu.dependencies]
-torch = "=2.0.1"
-torchaudio = "=2.0.2"
+audioloader = {git = "https://github.com/KinWaiCheuk/AudioLoader.git"}
+tqdm = "^4.66.1"
+torch = {version = "^2.0.1+cpu", source = "pytorch-cpu"}
+torchaudio = {version = "^2.0.2+cpu", source = "pytorch-cpu"}
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.7.0"
@@ -26,17 +23,22 @@ mypy = "^1.5.1"
 pre-commit = "^3.3.3"
 
 [[tool.poetry.source]]
-name = "pytorch"
-url = "https://download.pytorch.org/whl/cu111/"
-priority = "supplemental"
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+priority = "explicit"
+
 
 [[tool.poetry.source]]
-name = "PyPI"
-priority = "primary"
+name = "pytorch-gpu"
+url = "https://download.pytorch.org/whl/cu118"
+priority = "explicit"
 
 [[tool.mypy.overrides]]
 module = "torchaudio.*"
 ignore_missing_imports = true
+
+[tool.poetry.scripts]
+train = "swr2_asr.train:main"
 
 [build-system]
 requires = ["poetry-core"]
