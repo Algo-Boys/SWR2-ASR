@@ -5,7 +5,7 @@ recogniton 2 (SWR2) in the summer term 2023.
 
 # Installation
 ```
-pip install -r requirements.txt
+poetry install
 ```
 
 # Usage
@@ -14,13 +14,13 @@ pip install -r requirements.txt
 
 Train using the provided train script:
 
-    poetry run train --data PATH/TO/DATA --lr 0.01 
+    poetry run train
 
 ## Evaluation
 
 ## Inference
 
-    poetry run recognize --data PATH/TO/FILE
+    poetry run recognize
 
 ## CI
 
