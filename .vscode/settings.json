@@ -7,4 +7,6 @@
     },
     "black-formatter.importStrategy": "fromEnvironment",
     "python.analysis.typeCheckingMode": "basic",
+    "python.linting.pylintEnabled": true,
+    "python.linting.enabled": true,
 }
