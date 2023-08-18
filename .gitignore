@@ -1,3 +1,9 @@
+# Training files
+data/
+
+# Mac
+**/.DS_Store
+
 # Settings
 .vscode/*
 !.vscode/settings.json
