@@ -1,12 +1,9 @@
-# import dataset
-# define model
-# define loss
-# define optimizer
-# train
+"""Training script for the ASR model."""
 from AudioLoader.speech.mls import MultilingualLibriSpeech
 
 
-def main():
+def main() -> None:
+    """Main function."""
     dataset = MultilingualLibriSpeech(
         "data", "mls_polish_opus", split="train", download=True
     )

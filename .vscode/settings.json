@@ -6,4 +6,5 @@
         "editor.rulers": [80, 120],
     },
     "black-formatter.importStrategy": "fromEnvironment",
+    "python.analysis.typeCheckingMode": "basic",
 }

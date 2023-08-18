@@ -33,10 +33,6 @@ name = "pytorch-gpu"
 url = "https://download.pytorch.org/whl/cu118"
 priority = "explicit"
 
-[[tool.mypy.overrides]]
-module = "torchaudio.*"
-ignore_missing_imports = true
-
 [tool.poetry.scripts]
 train = "swr2_asr.train:main"
 

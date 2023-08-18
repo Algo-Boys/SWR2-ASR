@@ -9,5 +9,9 @@ numpy==1.25.2
 sympy==1.12
 torch==2.0.1
 torchaudio==2.0.2
+black==23.7.0
+click==8.1.7
+mypy==1.5.1
+pylint==2.17.5
 tqdm==4.66.1
 typing_extensions==4.7.1
