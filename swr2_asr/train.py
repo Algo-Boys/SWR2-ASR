@@ -1,11 +1,14 @@
 """Training script for the ASR model."""
 from AudioLoader.speech import MultilingualLibriSpeech
+import os
 import click
 import torch
 import torch.nn as nn
 import torch.optim as optim
 import torch.nn.functional as F
 from torch.utils.data import DataLoader
+from torch.utils.data.distributed import DistributedSampler
+import torch.distributed as dist
 import torchaudio
 from .loss_scores import cer, wer
 
@@ -388,7 +391,7 @@ def test(model, device, test_loader, criterion):
     )
 
 
-def run(learning_rate: float = 5e-4, batch_size: int = 8, epochs: int = 3) -> None:
+def run(learning_rate: float = 5e-4, batch_size: int = 8, epochs: int = 3, world_size: int = 1) -> None:
     """Runs the training script."""
     hparams = {
         "n_cnn_layers": 3,
@@ -401,6 +404,8 @@ def run(learning_rate: float = 5e-4, batch_size: int = 8, epochs: int = 3) -> No
         "learning_rate": learning_rate,
         "batch_size": batch_size,
         "epochs": epochs,
+        "world_size": world_size,
+        "distributed": world_size > 1,
     }
 
     use_cuda = torch.cuda.is_available()
@@ -415,22 +420,34 @@ def run(learning_rate: float = 5e-4, batch_size: int = 8, epochs: int = 3) -> No
         "/Volumes/pherkel/SWR2-ASR/", "mls_german_opus", split="test", download=False
     )
 
-    kwargs = {"num_workers": 1, "pin_memory": True} if use_cuda else {}
+    # initialize distributed training
+    ngpus_per_node = torch.cuda.device_count()
+    if hparams["distributed"]:
+        if 'SLURM_PROCID' in os.environ: # for slurm scheduler
+            hparams["rank"] = int(os.environ['SLURM_PROCID'])
+            hparams["gpu"] = hparams["rank"] % ngpus_per_node
+        dist.init_process_group(backend="nccl", init_method="env://",
+                                world_size=hparams["world_size"], rank=hparams["rank"])
 
+    train_sampler = DistributedSampler(train_dataset, shuffle=True)
     train_loader = DataLoader(
         train_dataset,
         batch_size=hparams["batch_size"],
         shuffle=True,
+        sampler=train_sampler,
+        num_workers=hparams["world_size"], # TODO?
+        pin_memory=True,
         collate_fn=lambda x: data_processing(x, "train"),
-        **kwargs,
     )
 
     test_loader = DataLoader(
         test_dataset,
         batch_size=hparams["batch_size"],
         shuffle=True,
+        sampler=None,
+        num_workers=hparams["world_size"], # TODO?
+        pin_memory=True,
         collate_fn=lambda x: data_processing(x, "train"),
-        **kwargs,
     )
 
     model = SpeechRecognitionModel(
@@ -442,6 +459,17 @@ def run(learning_rate: float = 5e-4, batch_size: int = 8, epochs: int = 3) -> No
         hparams["stride"],
         hparams["dropout"],
     ).to(device)
+
+    if hparams["distributed"]:
+        if "gpu" in hparams:
+            torch.cuda.set_device(hparams["gpu"])
+            model.cuda(hparams["gpu"])
+            model = torch.nn.parallel.DistributedDataParallel(model, device_ids=[hparams["gpu"]])
+            model_without_ddp = model.module
+        else:
+            model.cuda()
+            model = torch.nn.parallel.DistributedDataParallel(model)
+            model_without_ddp = model.module
 
     print(
         "Num Model Parameters", sum([param.nelement() for param in model.parameters()])
@@ -482,9 +510,10 @@ def run(learning_rate: float = 5e-4, batch_size: int = 8, epochs: int = 3) -> No
 @click.option("--learning-rate", default=1e-3, help="Learning rate")
 @click.option("--batch_size", default=1, help="Batch size")
 @click.option("--epochs", default=1, help="Number of epochs")
-def run_cli(learning_rate: float, batch_size: int, epochs: int) -> None:
+@click.option("--world_size", default=1, help="Number of nodes for distribution")
+def run_cli(learning_rate: float, batch_size: int, epochs: int, world_size: int) -> None:
     """Runs the training script."""
-    run(learning_rate=learning_rate, batch_size=batch_size, epochs=epochs)
+    run(learning_rate=learning_rate, batch_size=batch_size, epochs=epochs, world_size=world_size)
 
 
 if __name__ == "__main__":
