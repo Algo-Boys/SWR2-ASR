@@ -1,5 +1,5 @@
 """Training script for the ASR model."""
-from AudioLoader.speech.mls import MultilingualLibriSpeech
+from AudioLoader.speech import MultilingualLibriSpeech
 import click
 import torch
 import torch.nn as nn
