@@ -22,7 +22,7 @@ mypy = "^1.5.1"
 pylint = "^2.17.5"
 
 [tool.poetry.scripts]
-train = "swr2_asr.train_2:run"
+train = "swr2_asr.train:run_cli"
 
 [build-system]
 requires = ["poetry-core"]
