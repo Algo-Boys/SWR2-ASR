@@ -352,7 +352,7 @@ def train(
                     ({100.0 * batch_idx / len(train_loader)}%)]\t \
                     Loss: {loss.item()}"
             )
-            return loss.item()
+        return loss.item()
 
 def test(model, device, test_loader, criterion):
     """Test"""
