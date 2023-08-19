@@ -351,7 +351,9 @@ def train(
                     [{batch_idx * len(spectrograms)}/{data_len} \
                     ({100.0 * batch_idx / len(train_loader)}%)]\t \
                     Loss: {loss.item()}"
+                    
             )
+        return loss  
 
 
 def test(model, device, test_loader, criterion):
@@ -460,7 +462,7 @@ def run(learning_rate: float = 5e-4, batch_size: int = 8, epochs: int = 3) -> No
 
     iter_meter = IterMeter()
     for epoch in range(1, epochs + 1):
-        train(
+        loss = train(
             model,
             device,
             train_loader,
