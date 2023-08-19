@@ -9,8 +9,8 @@ from torch.utils.data import DataLoader
 import torchaudio
 from .loss_scores import cer, wer
 
-MODEL_SAVE_PATH = "models/model.pt"
-LOSS
+
+
 
 class TextTransform:
     """Maps characters to integers and vice versa"""
@@ -388,7 +388,7 @@ def test(model, device, test_loader, criterion):
     )
 
 
-def run(learning_rate: float = 5e-4, batch_size: int = 8, epochs: int = 3) -> None:
+def run(learning_rate: float = 5e-4, batch_size: int = 8, epochs: int = 3,load: bool=False, path: str="models/model.pt") -> None:
     """Runs the training script."""
     hparams = {
         "n_cnn_layers": 3,
@@ -446,10 +446,14 @@ def run(learning_rate: float = 5e-4, batch_size: int = 8, epochs: int = 3) -> No
     print(
         "Num Model Parameters", sum([param.nelement() for param in model.parameters()])
     )
-
     optimizer = optim.AdamW(model.parameters(), hparams["learning_rate"])
     criterion = nn.CTCLoss(blank=28).to(device)
-
+    if load:
+        checkpoint = torch.load(path)
+        model.load_state_dict(checkpoint['model_state_dict'])
+        optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
+        epoch = checkpoint['epoch']
+        loss = checkpoint['loss']
     scheduler = optim.lr_scheduler.OneCycleLR(
         optimizer,
         max_lr=hparams["learning_rate"],
@@ -474,7 +478,7 @@ def run(learning_rate: float = 5e-4, batch_size: int = 8, epochs: int = 3) -> No
             torch.save({
                 'epoch': epoch,
                 'model_state_dict': model.state_dict(),
-                'loss': loss},MODEL_SAVE_PATH)
+                'loss': loss},path)
         test(model=model, device=device, test_loader=test_loader, criterion=criterion)
 
 
@@ -482,10 +486,13 @@ def run(learning_rate: float = 5e-4, batch_size: int = 8, epochs: int = 3) -> No
 @click.option("--learning-rate", default=1e-3, help="Learning rate")
 @click.option("--batch_size", default=1, help="Batch size")
 @click.option("--epochs", default=1, help="Number of epochs")
-def run_cli(learning_rate: float, batch_size: int, epochs: int) -> None:
+@click.option("--load", default = False, help="Do you want to load a model?")
+@click.option("--path",default="models/model.pt",
+              help= "Path where the model will be saved to/loaded from" )
+def run_cli(learning_rate: float, batch_size: int, epochs: int, load:bool,path:str) -> None:
     """Runs the training script."""
-    run(learning_rate=learning_rate, batch_size=batch_size, epochs=epochs)
+    run(learning_rate=learning_rate, batch_size=batch_size, epochs=epochs,load= load, path = path)
 
 
 if __name__ == "__main__":
-    run(learning_rate=5e-4, batch_size=16, epochs=1)
+    run(learning_rate=5e-4, batch_size=16, epochs=1,load=False, path= "models/model.pt")
