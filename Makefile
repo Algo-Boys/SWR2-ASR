@@ -1,6 +1,6 @@
 format:
-	@black .
+	@poetry run black .
 
 lint:
-	@mypy --strict swr2_asr
-	@pylint swr2_asr
+	@poetry run mypy --strict swr2_asr
+	@poetry run pylint swr2_asr
