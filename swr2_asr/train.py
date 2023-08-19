@@ -131,7 +131,7 @@ def data_processing(data, data_type="train"):
 
 
 def greedy_decoder(
-    output, labels, label_lengths, blank_label=28, collapse_repeated=True
+    output, labels, label_lengths, blank_label=28, collapse_repeated=True, infer=False
 ):
     """Greedily decode a sequence."""
     arg_maxes = torch.argmax(output, dim=2)  # pylint: disable=no-member
@@ -139,9 +139,12 @@ def greedy_decoder(
     targets = []
     for i, args in enumerate(arg_maxes):
         decode = []
-        targets.append(
-            text_transform.int_to_text(labels[i][: label_lengths[i]].tolist())
-        )
+
+        if not infer:
+            targets.append(
+                text_transform.int_to_text(labels[i][: label_lengths[i]].tolist())
+            )
+
         for j, index in enumerate(args):
             if index != blank_label:
                 if collapse_repeated and j != 0 and index == args[j - 1]:
@@ -388,6 +391,19 @@ def test(model, device, test_loader, criterion):
     )
 
 
+# TODO: Should be in another file
+def infer_from_file(model, flac_path: str):
+    wav, sr = torchaudio.load(flac_path)
+    inputs = data_processing([{"waveform": wav, "utterance": ""}], "train")[0]
+    with torch.no_grad():
+        output = model(inputs)
+        output = F.log_softmax(output, dim=2)
+        decoded_preds, _ = greedy_decoder(
+            output.transpose(0, 1), None, None, infer=True
+        )
+        print(decoded_preds)
+
+
 def run(
     learning_rate: float,
     batch_size: int,
@@ -395,6 +411,7 @@ def run(
     load: bool,
     path: str,
     dataset_path: str,
+    infer_path: str,
 ) -> None:
     """Runs the training script."""
     hparams = {
@@ -413,29 +430,31 @@ def run(
     use_cuda = torch.cuda.is_available()
     torch.manual_seed(42)
     device = torch.device("cuda" if use_cuda else "cpu")  # pylint: disable=no-member
-    # device = torch.device("mps")
 
-    download_dataset = not os.path.isdir(path)
-    train_dataset = MultilingualLibriSpeech(
-        dataset_path, "mls_german_opus", split="dev", download=download_dataset
-    )
-    test_dataset = MultilingualLibriSpeech(
-        dataset_path, "mls_german_opus", split="test", download=False
-    )
+    # TODO: restructure so inference doesn't need to happen in run()
 
-    train_loader = DataLoader(
-        train_dataset,
-        batch_size=hparams["batch_size"],
-        shuffle=True,
-        collate_fn=lambda x: data_processing(x, "train"),
-    )
+    if not infer_path:  # not important if not inferring
+        download_dataset = not os.path.isdir(path)
+        train_dataset = MultilingualLibriSpeech(
+            dataset_path, "mls_german_opus", split="dev", download=download_dataset
+        )
+        test_dataset = MultilingualLibriSpeech(
+            dataset_path, "mls_german_opus", split="test", download=False
+        )
 
-    test_loader = DataLoader(
-        test_dataset,
-        batch_size=hparams["batch_size"],
-        shuffle=True,
-        collate_fn=lambda x: data_processing(x, "train"),
-    )
+        train_loader = DataLoader(
+            train_dataset,
+            batch_size=hparams["batch_size"],
+            shuffle=True,
+            collate_fn=lambda x: data_processing(x, "train"),
+        )
+
+        test_loader = DataLoader(
+            test_dataset,
+            batch_size=hparams["batch_size"],
+            shuffle=True,
+            collate_fn=lambda x: data_processing(x, "train"),
+        )
 
     # enable flag to find the most compatible algorithms in advance
     if use_cuda:
@@ -457,11 +476,15 @@ def run(
     optimizer = optim.AdamW(model.parameters(), hparams["learning_rate"])
     criterion = nn.CTCLoss(blank=28).to(device)
     if load:
-        checkpoint = torch.load(path)
+        checkpoint = torch.load(path, map_location=device)
         model.load_state_dict(checkpoint["model_state_dict"])
-        optimizer.load_state_dict(checkpoint["optimizer_state_dict"])
         epoch = checkpoint["epoch"]
         loss = checkpoint["loss"]
+
+    if infer_path:
+        infer_from_file(model, infer_path)
+        return
+
     scheduler = optim.lr_scheduler.OneCycleLR(
         optimizer,
         max_lr=hparams["learning_rate"],
@@ -506,6 +529,7 @@ def run(
     default="data/",
     help="Path for the dataset directory",
 )
+@click.option("--infer_path", default="", help="Infer from flac file")
 def run_cli(
     learning_rate: float,
     batch_size: int,
@@ -513,6 +537,7 @@ def run_cli(
     load: bool,
     path: str,
     dataset_path: str,
+    infer_path: str,
 ) -> None:
     """Runs the training script."""
 
@@ -523,4 +548,5 @@ def run_cli(
         load=load,
         path=path,
         dataset_path=dataset_path,
+        infer_path=infer_path,
     )
