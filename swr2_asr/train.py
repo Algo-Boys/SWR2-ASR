@@ -7,8 +7,6 @@ import torch.nn as nn
 import torch.optim as optim
 import torch.nn.functional as F
 from torch.utils.data import DataLoader
-from torch.utils.data.distributed import DistributedSampler
-import torch.distributed as dist
 import torchaudio
 from .loss_scores import cer, wer
 
@@ -394,7 +392,6 @@ def run(
     learning_rate: float,
     batch_size: int,
     epochs: int,
-    world_size: int,
     load: bool,
     path: str,
     dataset_path: str,
@@ -411,8 +408,6 @@ def run(
         "learning_rate": learning_rate,
         "batch_size": batch_size,
         "epochs": epochs,
-        "world_size": world_size,
-        "distributed": world_size > 1,
     }
 
     use_cuda = torch.cuda.is_available()
@@ -422,37 +417,16 @@ def run(
 
     download_dataset = not os.path.isdir(path)
     train_dataset = MultilingualLibriSpeech(
-        dataset_path, "mls_polish_opus", split="dev", download=download_dataset
+        dataset_path, "mls_german_opus", split="dev", download=download_dataset
     )
     test_dataset = MultilingualLibriSpeech(
-        dataset_path, "mls_polish_opus", split="test", download=False
+        dataset_path, "mls_german_opus", split="test", download=False
     )
 
-    # initialize distributed training
-    ngpus_per_node = torch.cuda.device_count()
-    if hparams["distributed"]:
-        if "SLURM_PROCID" in os.environ:  # for slurm scheduler
-            hparams["rank"] = int(os.environ["SLURM_PROCID"])
-            hparams["gpu"] = hparams["rank"] % ngpus_per_node
-        dist.init_process_group(
-            backend="nccl",
-            init_method="env://",
-            world_size=hparams["world_size"],
-            rank=hparams["rank"],
-        )
-
-    train_sampler = (
-        DistributedSampler(train_dataset, shuffle=True)
-        if hparams["distributed"]
-        else None
-    )
     train_loader = DataLoader(
         train_dataset,
         batch_size=hparams["batch_size"],
         shuffle=True,
-        sampler=train_sampler,
-        num_workers=hparams["world_size"],  # TODO?
-        pin_memory=True,
         collate_fn=lambda x: data_processing(x, "train"),
     )
 
@@ -460,11 +434,12 @@ def run(
         test_dataset,
         batch_size=hparams["batch_size"],
         shuffle=True,
-        sampler=None,
-        num_workers=hparams["world_size"],  # TODO?
-        pin_memory=True,
         collate_fn=lambda x: data_processing(x, "train"),
     )
+
+    # enable flag to find the most compatible algorithms in advance
+    if use_cuda:
+        torch.backends.cudnn.benchmark = True
 
     model = SpeechRecognitionModel(
         hparams["n_cnn_layers"],
@@ -475,19 +450,6 @@ def run(
         hparams["stride"],
         hparams["dropout"],
     ).to(device)
-
-    if hparams["distributed"]:
-        if "gpu" in hparams:
-            torch.cuda.set_device(hparams["gpu"])
-            model.cuda(hparams["gpu"])
-            model = torch.nn.parallel.DistributedDataParallel(
-                model, device_ids=[hparams["gpu"]]
-            )
-            model_without_ddp = model.module
-        else:
-            model.cuda()
-            model = torch.nn.parallel.DistributedDataParallel(model)
-            model_without_ddp = model.module
 
     print(
         "Num Model Parameters", sum([param.nelement() for param in model.parameters()])
@@ -520,23 +482,23 @@ def run(
             epoch,
             iter_meter,
         )
-        if epoch % 3 == 0 or epoch == epochs:
-            torch.save(
-                {"epoch": epoch, "model_state_dict": model.state_dict(), "loss": loss},
-                path,
-            )
+
         test(model=model, device=device, test_loader=test_loader, criterion=criterion)
+        print("saving epoch", str(epoch))
+        torch.save(
+            {"epoch": epoch, "model_state_dict": model.state_dict(), "loss": loss},
+            path + str(epoch),
+        )
 
 
 @click.command()
 @click.option("--learning_rate", default=1e-3, help="Learning rate")
-@click.option("--batch_size", default=1, help="Batch size")
+@click.option("--batch_size", default=10, help="Batch size")
 @click.option("--epochs", default=1, help="Number of epochs")
-@click.option("--world_size", default=1, help="Number of nodes for distribution")
 @click.option("--load", default=False, help="Do you want to load a model?")
 @click.option(
     "--path",
-    default="models/model.pt",
+    default="model",
     help="Path where the model will be saved to/loaded from",
 )
 @click.option(
@@ -548,17 +510,16 @@ def run_cli(
     learning_rate: float,
     batch_size: int,
     epochs: int,
-    world_size: int,
     load: bool,
     path: str,
     dataset_path: str,
 ) -> None:
     """Runs the training script."""
+
     run(
         learning_rate=learning_rate,
         batch_size=batch_size,
         epochs=epochs,
-        world_size=world_size,
         load=load,
         path=path,
         dataset_path=dataset_path,
