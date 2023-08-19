@@ -524,7 +524,3 @@ def run_cli(
         path=path,
         dataset_path=dataset_path,
     )
-
-
-if __name__ == "__main__":
-    run_cli()
