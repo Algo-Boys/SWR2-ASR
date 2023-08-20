@@ -3,10 +3,12 @@
         "editor.formatOnType": true,
         "editor.defaultFormatter": "ms-python.black-formatter",
         "editor.formatOnSave": true,
-        "editor.rulers": [80, 120],
+        "editor.rulers": [88, 120],
     },
     "black-formatter.importStrategy": "fromEnvironment",
     "python.analysis.typeCheckingMode": "basic",
-    "python.linting.pylintEnabled": true,
-    "python.linting.enabled": true,
+    "ruff.organizeImports": true,
+    "ruff.importStrategy": "fromEnvironment",
+    "ruff.fixAll": true,
+    "ruff.run": "onType"
 }

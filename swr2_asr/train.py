@@ -1,94 +1,16 @@
 """Training script for the ASR model."""
-from AudioLoader.speech import MultilingualLibriSpeech
 import os
 import click
 import torch
-import torch.nn as nn
-import torch.optim as optim
 import torch.nn.functional as F
-from torch.utils.data import DataLoader
 import torchaudio
+from AudioLoader.speech import MultilingualLibriSpeech
+from torch import nn, optim
+from torch.utils.data import DataLoader
+from tokenizers import Tokenizer
+from .tokenizer import CharTokenizer
+
 from .loss_scores import cer, wer
-
-
-class TextTransform:
-    """Maps characters to integers and vice versa"""
-
-    def __init__(self):
-        char_map_str = """
-        ' 0
-        <SPACE> 1
-        a 2
-        b 3
-        c 4
-        d 5
-        e 6
-        f 7
-        g 8
-        h 9
-        i 10
-        j 11
-        k 12
-        l 13
-        m 14
-        n 15
-        o 16
-        p 17
-        q 18
-        r 19
-        s 20
-        t 21
-        u 22
-        v 23
-        w 24
-        x 25
-        y 26
-        z 27
-        ä 28
-        ö 29
-        ü 30
-        ß 31
-        - 32
-        é 33
-        è 34
-        à 35
-        ù 36
-        ç 37
-        â 38 
-        ê 39
-        î 40
-        ô 41
-        û 42
-        ë 43
-        ï 44
-        ü 45
-        """
-        self.char_map = {}
-        self.index_map = {}
-        for line in char_map_str.strip().split("\n"):
-            char, index = line.split()
-            self.char_map[char] = int(index)
-            self.index_map[int(index)] = char
-        self.index_map[1] = " "
-
-    def text_to_int(self, text):
-        """Use a character map and convert text to an integer sequence"""
-        int_sequence = []
-        for char in text:
-            if char == " ":
-                mapped_char = self.char_map["<SPACE>"]
-            else:
-                mapped_char = self.char_map[char]
-            int_sequence.append(mapped_char)
-        return int_sequence
-
-    def int_to_text(self, labels):
-        """Use a character map and convert integer labels to an text sequence"""
-        string = []
-        for i in labels:
-            string.append(self.index_map[i])
-        return "".join(string).replace("<SPACE>", " ")
-
 
 train_audio_transforms = nn.Sequential(
     torchaudio.transforms.MelSpectrogram(sample_rate=16000, n_mels=128),
@@ -98,7 +20,9 @@ train_audio_transforms = nn.Sequential(
 
 valid_audio_transforms = torchaudio.transforms.MelSpectrogram()
 
-text_transform = TextTransform()
+# text_transform = Tokenizer.from_file("data/tokenizers/bpe_tokenizer_german_3000.json")
+text_transform = CharTokenizer()
+text_transform.from_file("data/tokenizers/char_tokenizer_german.json")
 
 
 def data_processing(data, data_type="train"):
@@ -115,7 +39,7 @@ def data_processing(data, data_type="train"):
         else:
             raise ValueError("data_type should be train or valid")
         spectrograms.append(spec)
-        label = torch.Tensor(text_transform.text_to_int(sample["utterance"].lower()))
+        label = torch.Tensor(text_transform.encode(sample["utterance"]).ids)
         labels.append(label)
         input_lengths.append(spec.shape[0] // 2)
         label_lengths.append(len(label))
@@ -133,6 +57,7 @@ def data_processing(data, data_type="train"):
 def greedy_decoder(
     output, labels, label_lengths, blank_label=28, collapse_repeated=True
 ):
+    # TODO: adopt to support both tokenizers
     """Greedily decode a sequence."""
     arg_maxes = torch.argmax(output, dim=2)  # pylint: disable=no-member
     decodes = []
@@ -140,22 +65,25 @@ def greedy_decoder(
     for i, args in enumerate(arg_maxes):
         decode = []
         targets.append(
-            text_transform.int_to_text(labels[i][: label_lengths[i]].tolist())
+            text_transform.decode(
+                [int(x) for x in labels[i][: label_lengths[i]].tolist()]
+            )
         )
         for j, index in enumerate(args):
             if index != blank_label:
                 if collapse_repeated and j != 0 and index == args[j - 1]:
                     continue
                 decode.append(index.item())
-        decodes.append(text_transform.int_to_text(decode))
+        decodes.append(text_transform.decode(decode))
     return decodes, targets
 
 
+# TODO: restructure into own file / class
 class CNNLayerNorm(nn.Module):
     """Layer normalization built for cnns input"""
 
     def __init__(self, n_feats: int):
-        super(CNNLayerNorm, self).__init__()
+        super().__init__()
         self.layer_norm = nn.LayerNorm(n_feats)
 
     def forward(self, data):
@@ -177,7 +105,7 @@ class ResidualCNN(nn.Module):
         dropout: float,
         n_feats: int,
     ):
-        super(ResidualCNN, self).__init__()
+        super().__init__()
 
         self.cnn1 = nn.Conv2d(
             in_channels, out_channels, kernel, stride, padding=kernel // 2
@@ -219,7 +147,7 @@ class BidirectionalGRU(nn.Module):
         dropout: float,
         batch_first: bool,
     ):
-        super(BidirectionalGRU, self).__init__()
+        super().__init__()
 
         self.bi_gru = nn.GRU(
             input_size=rnn_dim,
@@ -253,7 +181,7 @@ class SpeechRecognitionModel(nn.Module):
         stride: int = 2,
         dropout: float = 0.1,
     ):
-        super(SpeechRecognitionModel, self).__init__()
+        super().__init__()
         n_feats //= 2
         self.cnn = nn.Conv2d(1, 32, 3, stride=stride, padding=3 // 2)
         # n residual cnn layers with filter size of 32
@@ -299,7 +227,7 @@ class SpeechRecognitionModel(nn.Module):
         return data
 
 
-class IterMeter(object):
+class IterMeter:
     """keeps track of total iterations"""
 
     def __init__(self):
@@ -354,6 +282,7 @@ def train(
         return loss.item()
 
 
+# TODO: check how dataloader can be made more efficient
 def test(model, device, test_loader, criterion):
     """Test"""
     print("\nevaluating...")
@@ -401,7 +330,7 @@ def run(
         "n_cnn_layers": 3,
         "n_rnn_layers": 5,
         "rnn_dim": 512,
-        "n_class": 46,
+        "n_class": 36,  # TODO: dynamically determine this from vocab size
         "n_feats": 128,
         "stride": 2,
         "dropout": 0.1,
@@ -452,7 +381,7 @@ def run(
     ).to(device)
 
     print(
-        "Num Model Parameters", sum([param.nelement() for param in model.parameters()])
+        "Num Model Parameters", sum((param.nelement() for param in model.parameters()))
     )
     optimizer = optim.AdamW(model.parameters(), hparams["learning_rate"])
     criterion = nn.CTCLoss(blank=28).to(device)
