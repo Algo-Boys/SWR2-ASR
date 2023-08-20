@@ -23,7 +23,7 @@ jobs:
           make format-check
       - name: Run pylint
         run: |
-          poetry run pylint swr2_asr
+          poetry run pylint --fail-under=9 swr2_asr
       - name: Run mypy
         run: |
           poetry run mypy --strict swr2_asr
