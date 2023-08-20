@@ -26,7 +26,7 @@ class CharTokenizer:
     Simply checks what characters are in the dataset and uses them as tokens.
 
     Exposes the same interface as tokenizers from the huggingface library, i.e.
-    encode, decode, decode_batch, save, from_file and train.
+    encode, decode, decode_batch, get_vocab_size, save, from_file and train.
     """
 
     def __init__(self):
@@ -139,6 +139,10 @@ class CharTokenizer:
                 string.append(self.index_map[i])
             strings.append("".join(string).replace("<SPACE>", " "))
         return strings
+
+    def get_vocab_size(self):
+        """Get the size of the vocabulary"""
+        return len(self.char_map)
 
     def save(self, path: str):
         """Save the tokenizer to a file"""
