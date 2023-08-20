@@ -63,15 +63,15 @@ class CharTokenizer:
         else:
             splits = [split]
 
-        chars = set()
-        for sp in splits:
+        chars: set = set()
+        for s_plit in splits:
             transcript_path = os.path.join(
-                dataset_path, language, sp, "transcripts.txt"
+                dataset_path, language, s_plit, "transcripts.txt"
             )
 
             # check if dataset is downloaded, download if not
             if download and not os.path.exists(transcript_path):
-                MultilingualLibriSpeech(dataset_path, language, sp, download=True)
+                MultilingualLibriSpeech(dataset_path, language, s_plit, download=True)
 
             with open(
                 transcript_path,
@@ -82,7 +82,7 @@ class CharTokenizer:
             lines = [line.split(" ", 1)[1] for line in lines]
             lines = [line.strip() for line in lines]
 
-            for line in tqdm(lines, desc=f"Training tokenizer on {sp} split"):
+            for line in tqdm(lines, desc=f"Training tokenizer on {s_plit} split"):
                 chars.update(line)
         offset = len(self.char_map)
         for i, char in enumerate(chars):
@@ -205,10 +205,12 @@ def train_bpe_tokenizer(
 
     lines = []
 
-    for sp in splits:
-        transcripts_path = os.path.join(dataset_path, language, sp, "transcripts.txt")
+    for s_plit in splits:
+        transcripts_path = os.path.join(
+            dataset_path, language, s_plit, "transcripts.txt"
+        )
         if download and not os.path.exists(transcripts_path):
-            MultilingualLibriSpeech(dataset_path, language, sp, download=True)
+            MultilingualLibriSpeech(dataset_path, language, s_plit, download=True)
 
         with open(
             transcripts_path,

@@ -23,6 +23,7 @@ black = "^23.7.0"
 mypy = "^1.5.1"
 pylint = "^2.17.5"
 ruff = "^0.0.285"
+types-tqdm = "^4.66.0.1"
 
 [tool.poetry.scripts]
 train = "swr2_asr.train:run_cli"

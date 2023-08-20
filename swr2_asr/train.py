@@ -83,7 +83,7 @@ class CNNLayerNorm(nn.Module):
     """Layer normalization built for cnns input"""
 
     def __init__(self, n_feats: int):
-        super(CNNLayerNorm, self).__init__()
+        super().__init__()
         self.layer_norm = nn.LayerNorm(n_feats)
 
     def forward(self, data):
@@ -105,7 +105,7 @@ class ResidualCNN(nn.Module):
         dropout: float,
         n_feats: int,
     ):
-        super(ResidualCNN, self).__init__()
+        super().__init__()
 
         self.cnn1 = nn.Conv2d(
             in_channels, out_channels, kernel, stride, padding=kernel // 2
@@ -147,7 +147,7 @@ class BidirectionalGRU(nn.Module):
         dropout: float,
         batch_first: bool,
     ):
-        super(BidirectionalGRU, self).__init__()
+        super().__init__()
 
         self.bi_gru = nn.GRU(
             input_size=rnn_dim,
@@ -181,7 +181,7 @@ class SpeechRecognitionModel(nn.Module):
         stride: int = 2,
         dropout: float = 0.1,
     ):
-        super(SpeechRecognitionModel, self).__init__()
+        super().__init__()
         n_feats //= 2
         self.cnn = nn.Conv2d(1, 32, 3, stride=stride, padding=3 // 2)
         # n residual cnn layers with filter size of 32
@@ -227,7 +227,7 @@ class SpeechRecognitionModel(nn.Module):
         return data
 
 
-class IterMeter(object):
+class IterMeter:
     """keeps track of total iterations"""
 
     def __init__(self):
@@ -381,7 +381,7 @@ def run(
     ).to(device)
 
     print(
-        "Num Model Parameters", sum([param.nelement() for param in model.parameters()])
+        "Num Model Parameters", sum((param.nelement() for param in model.parameters()))
     )
     optimizer = optim.AdamW(model.parameters(), hparams["learning_rate"])
     criterion = nn.CTCLoss(blank=28).to(device)
