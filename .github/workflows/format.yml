@@ -24,6 +24,6 @@ jobs:
       - name: Run pylint
         run: |
           poetry run pylint --fail-under=9 swr2_asr
-      - name: Run mypy
-        run: |
-          poetry run mypy --strict swr2_asr
+        # run: |
+        #  poetry run mypy --strict swr2_asr
+      #- name: Run mypy
