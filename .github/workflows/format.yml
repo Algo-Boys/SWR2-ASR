@@ -13,7 +13,13 @@ jobs:
         python-version: "3.10"
     - name: Install dependencies
       run: |
-        pip install -r requirements.txt
+        python -m pip install -U pip poetry
+        poetry --version
+        poetry check --no-interaction
+        poetry config virtualenvs.in-project true
+        poetry install --no-interaction
     - name: Run CI
       run: |
         make lint
+
+        
