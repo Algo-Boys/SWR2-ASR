@@ -155,14 +155,18 @@ class CharTokenizer:
                 ensure_ascii=False,
             )
 
-    def from_file(self, path: str):
+    @staticmethod
+    def from_file(path: str) -> "CharTokenizer":
         """Load the tokenizer from a file"""
+        char_tokenizer = CharTokenizer()
         with open(path, "r", encoding="utf-8") as file:
             # load it in the following format:
             # {"char_map": {"a": 0, "b": 1, ...}, "index_map": {0: "a", 1: "b", ...}}
             saved_file = json.load(file)
-        self.char_map = saved_file["char_map"]
-        self.index_map = saved_file["index_map"]
+        char_tokenizer.char_map = saved_file["char_map"]
+        char_tokenizer.index_map = saved_file["index_map"]
+
+        return char_tokenizer
 
 
 @click.command()
