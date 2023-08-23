@@ -25,6 +25,15 @@ pylint = "^2.17.5"
 ruff = "^0.0.285"
 types-tqdm = "^4.66.0.1"
 
+[tool.ruff]
+select = ["E", "F", "B", "I"]
+fixable = ["ALL"]
+line-length = 120
+target-version = "py310"
+
+[tool.black]
+line-length = 120
+
 [tool.poetry.scripts]
 train = "swr2_asr.train:run_cli"
 train-bpe-tokenizer = "swr2_asr.tokenizer:train_bpe_tokenizer"
