@@ -302,6 +302,7 @@ def train_bpe_tokenizer(
         "ü",
     ]
 
+    # TODO: add padding token / whitespace token / special tokens
     trainer = BpeTrainer(
         special_tokens=["[UNK]"],
         vocab_size=vocab_size,

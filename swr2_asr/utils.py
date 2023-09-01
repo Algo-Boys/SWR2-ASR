@@ -236,6 +236,7 @@ class MLSDataset(Dataset):
             book_id=self.dataset_lookup[idx]["bookid"],
             chapter_id=self.dataset_lookup[idx]["chapterid"],
         )
+        
 
 def collate_fn(samples: list[Sample]) -> dict:
     """Collate function for the dataloader
@@ -266,8 +267,7 @@ def collate_fn(samples: list[Sample]) -> dict:
         "utterance": labels,
         "utterance_length": label_lengths,
     }
-         
-
+    
 
 if __name__ == "__main__":
     dataset_path = "/Volumes/pherkel/SWR2-ASR"
