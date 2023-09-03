@@ -44,9 +44,7 @@ def main() -> None:
     print(model.__class__)
 
     # only do all things for one single sample
-    dataset = MultilingualLibriSpeech(
-        "data", "mls_german_opus", split="train", download=True
-    )
+    dataset = MultilingualLibriSpeech("data", "mls_german_opus", split="train", download=True)
 
     print(dataset[0])
 
