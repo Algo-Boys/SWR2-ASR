@@ -102,7 +102,6 @@ def train(
     return sum(losses) / len(losses)
 
 
-
 def test(model, device, test_loader, criterion, tokenizer):
     """Test"""
     print("\nevaluating...")
