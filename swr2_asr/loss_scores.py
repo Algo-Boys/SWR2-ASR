@@ -54,9 +54,7 @@ def _levenshtein_distance(ref, hyp):
     return distance[len_ref % 2][len_hyp]
 
 
-def word_errors(
-    reference: str, hypothesis: str, ignore_case: bool = False, delimiter: str = " "
-):
+def word_errors(reference: str, hypothesis: str, ignore_case: bool = False, delimiter: str = " "):
     """Compute the levenshtein distance between reference sequence and
     hypothesis sequence in word-level.
     :param reference: The reference sentence.
@@ -176,9 +174,7 @@ def cer(reference, hypothesis, ignore_case=False, remove_space=False):
     :rtype: float
     :raises ValueError: If the reference length is zero.
     """
-    edit_distance, ref_len = char_errors(
-        reference, hypothesis, ignore_case, remove_space
-    )
+    edit_distance, ref_len = char_errors(reference, hypothesis, ignore_case, remove_space)
 
     if ref_len == 0:
         raise ValueError("Length of reference should be greater than 0.")
