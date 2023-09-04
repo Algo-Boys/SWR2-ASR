@@ -173,7 +173,6 @@ def run(
             split="all",
             download=False,
             out_path="data/tokenizers/char_tokenizer_german.json",
-            vocab_size=3000,
         )
 
     tokenizer = CharTokenizer.from_file("data/tokenizers/char_tokenizer_german.json")
@@ -305,4 +304,4 @@ def run_cli(
 
 
 if __name__ == "__main__":
-    run(1e-3, 10, 1, False, "", "/Volumes/pherkel/SWR2-ASR", "mls_german_opus")
+    run_cli()

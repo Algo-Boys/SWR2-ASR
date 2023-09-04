@@ -187,6 +187,7 @@ class CharTokenizer(TokenizerType):
 
     def save(self, path: str):
         """Save the tokenizer to a file"""
+        os.makedirs(os.path.dirname(path), exist_ok=True)
         with open(path, "w", encoding="utf-8") as file:
             # save it in the following format:
             # {"char_map": {"a": 0, "b": 1, ...}, "index_map": {0: "a", 1: "b", ...}}
@@ -217,6 +218,23 @@ class CharTokenizer(TokenizerType):
 @click.option("--download", default=True, help="Whether to download the dataset")
 @click.option("--out_path", default="tokenizer.json", help="Path to save the tokenizer to")
 @click.option("--vocab_size", default=2000, help="Size of the vocabulary")
+def train_bpe_tokenizer_cli(
+    dataset_path: str,
+    language: str,
+    split: str,
+    out_path: str,
+    download: bool,
+    vocab_size: int,
+):
+  train_bpe_tokenizer(
+    dataset_path,
+    language,
+    split,
+    out_path,
+    download,
+    vocab_size,
+)
+
 def train_bpe_tokenizer(
     dataset_path: str,
     language: str,
@@ -251,6 +269,7 @@ def train_bpe_tokenizer(
     for s_plit in splits:
         transcripts_path = os.path.join(dataset_path, language, s_plit, "transcripts.txt")
         if download and not os.path.exists(transcripts_path):
+          # TODO: move to own dataset
             MultilingualLibriSpeech(dataset_path, language, s_plit, download=True)
 
         with open(
@@ -337,6 +356,15 @@ def train_bpe_tokenizer(
 @click.option("--split", default="train", help="Split to use")
 @click.option("--out_path", default="tokenizer_chars.txt", help="Path to save the tokenizer to")
 @click.option("--download", default=True, help="Whether to download the dataset")
+def train_char_tokenizer_cli(
+    dataset_path: str,
+    language: str,
+    split: str,
+    out_path: str,
+    download: bool,
+    ):
+    train_char_tokenizer(dataset_path, language, split, out_path, download)
+
 def train_char_tokenizer(
     dataset_path: str,
     language: str,
