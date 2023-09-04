@@ -181,15 +181,21 @@ class MLSDataset(Dataset):
             os.makedirs(self.dataset_path, exist_ok=True)
             url = f"https://dl.fbaipublicfiles.com/mls/{self.language}.tar.gz"
 
-            torch.hub.download_url_to_file(url, os.path.join(self.dataset_path, self.language) + ".tar.gz")
+            torch.hub.download_url_to_file(
+                url, os.path.join(self.dataset_path, self.language) + ".tar.gz"
+            )
 
         # unzip the dataset
         if not os.path.isdir(os.path.join(self.dataset_path, self.language)):
-          print(f"Unzipping the dataset at {os.path.join(self.dataset_path, self.language) + '.tar.gz'}")
-          extract_archive(os.path.join(self.dataset_path, self.language) + ".tar.gz", overwrite=True)
+            print(
+                f"Unzipping the dataset at {os.path.join(self.dataset_path, self.language) + '.tar.gz'}"
+            )
+            extract_archive(
+                os.path.join(self.dataset_path, self.language) + ".tar.gz", overwrite=True
+            )
         else:
-          print("Dataset is already unzipped, validating it now")
-          return
+            print("Dataset is already unzipped, validating it now")
+            return
 
     def _validate_local_directory(self):
         # check if dataset_path exists

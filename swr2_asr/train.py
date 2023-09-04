@@ -304,4 +304,4 @@ def run_cli(
 
 
 if __name__ == "__main__":
-    run_cli()
+    run_cli()  # pylint: disable=no-value-for-parameter
