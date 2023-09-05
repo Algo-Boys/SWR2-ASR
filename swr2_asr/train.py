@@ -253,7 +253,7 @@ def run(
             iter_meter,
         )
 
-        test(
+        test_loss,avg_cer,avg_wer = test(
             model=model,
             device=device,
             test_loader=valid_loader,
@@ -262,7 +262,12 @@ def run(
         )
         print("saving epoch", str(epoch))
         torch.save(
-            {"epoch": epoch, "model_state_dict": model.state_dict(), "loss": loss},
+            {"epoch": epoch,
+              "model_state_dict": model.state_dict(),
+             "loss": loss, 
+             "test_loss": test_loss,
+             "avg_cer": avg_cer,
+             "avg_wer": avg_wer},
             path + str(epoch),
         )
 
