@@ -4,6 +4,7 @@ from typing import TypedDict
 
 import click
 import torch
+import torch.nn
 import torch.nn.functional as F
 from torch import nn, optim
 from torch.utils.data import DataLoader
@@ -166,12 +167,12 @@ def run(
     # load tokenizer (bpe by default):
     if not os.path.isfile("data/tokenizers/char_tokenizer_german.json"):
         print("There is no tokenizer available. Do you want to train it on the dataset?")
-        input("Press Enter to continue...")
+        #input("Press Enter to continue...")
         train_char_tokenizer(
             dataset_path=dataset_path,
             language=language,
             split="all",
-            download=False,
+            #download=False,
             out_path="data/tokenizers/char_tokenizer_german.json",
         )
 
@@ -221,7 +222,8 @@ def run(
         hparams["n_feats"],
         hparams["stride"],
         hparams["dropout"],
-    ).to(device)
+    )
+    model = nn.DataParallel(model).to(device)
     print(tokenizer.encode(" "))
     print("Num Model Parameters", sum((param.nelement() for param in model.parameters())))
     optimizer = optim.AdamW(model.parameters(), hparams["learning_rate"])

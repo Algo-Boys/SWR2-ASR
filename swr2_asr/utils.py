@@ -96,7 +96,7 @@ class MLSDataset(Dataset):
         language: str,
         split: Split,
         download: bool,
-        spectrogram_hparams: dict | None,
+        spectrogram_hparams,
     ):
         """Initializes the dataset"""
         self.dataset_path = dataset_path
@@ -162,7 +162,7 @@ class MLSDataset(Dataset):
                     "chapterid": path[2],
                     "utterance": utterance,
                 }
-                for path, utterance in zip(identifier, utterances, strict=False)
+                for path, utterance in zip(identifier, utterances)
             ]
 
     def set_tokenizer(self, tokenizer: type[TokenizerType]):
