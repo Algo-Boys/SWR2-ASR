@@ -156,7 +156,7 @@ class CharTokenizer(TokenizerType):
         """
         string = []
         for i in labels:
-            if remove_special_tokens and self.index_map[f"{i}"] == "<UNK>":
+            if remove_special_tokens and self.index_map[f"{i}"] == "<UNK>": 
                 continue
             if remove_special_tokens and self.index_map[f"{i}"] == "<SPACE>":
                 string.append(" ")
@@ -329,7 +329,7 @@ def train_bpe_tokenizer(
         "ü",
     ]
 
-    # TODO: add padding token / whitespace token / special tokens
+    
     trainer = BpeTrainer(
         special_tokens=["[UNK]"],
         vocab_size=vocab_size,
