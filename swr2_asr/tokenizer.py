@@ -77,7 +77,6 @@ class CharTokenizer(TokenizerType):
     def __init__(self):
         self.char_map = {}
         self.index_map = {}
-        self.add_tokens(["<UNK>", "<SPACE>"])
 
     def add_tokens(self, tokens: list[str]):
         """Manually add tokens to the tokenizer
@@ -128,22 +127,11 @@ class CharTokenizer(TokenizerType):
             self.index_map[i] = char
 
     def encode(self, sequence: str):
-        """Use a character map and convert text to an integer sequence
-
-        automatically maps spaces to <SPACE> and makes everything lowercase
-        unknown characters are mapped to the <UNK> token
-
-        """
+        """Use a character map and convert text to an integer sequence"""
         int_sequence = []
         sequence = sequence.lower()
         for char in sequence:
-            if char == " ":
-                mapped_char = self.char_map["<SPACE>"]
-            elif char not in self.char_map:
-                mapped_char = self.char_map["<UNK>"]
-            else:
-                mapped_char = self.char_map[char]
-            int_sequence.append(mapped_char)
+            int_sequence.append(self.char_map[char])
         return Encoding(ids=int_sequence, tokens=list(sequence))
 
     def decode(self, labels: list[int], remove_special_tokens: bool = True):
@@ -156,12 +144,8 @@ class CharTokenizer(TokenizerType):
         """
         string = []
         for i in labels:
-            if remove_special_tokens and self.index_map[f"{i}"] == "<UNK>":
-                continue
-            if remove_special_tokens and self.index_map[f"{i}"] == "<SPACE>":
-                string.append(" ")
             string.append(self.index_map[f"{i}"])
-        return "".join(string).replace("<SPACE>", " ")
+        return "".join(string)
 
     def decode_batch(self, labels: list[list[int]]):
         """Use a character map and convert integer labels to an text sequence"""
@@ -169,12 +153,8 @@ class CharTokenizer(TokenizerType):
         for label in labels:
             string = []
             for i in label:
-                if self.index_map[i] == "<UNK>":
-                    continue
-                if self.index_map[i] == "<SPACE>":
-                    string.append(" ")
                 string.append(self.index_map[i])
-            strings.append("".join(string).replace("<SPACE>", " "))
+            strings.append("".join(string))
         return strings
 
     def get_vocab_size(self):

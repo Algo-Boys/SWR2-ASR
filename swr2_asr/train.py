@@ -123,6 +123,8 @@ def test(model, device, test_loader, criterion, tokenizer):
                 label_lengths=_data["utterance_length"],
                 tokenizer=tokenizer,
             )
+
+            print(f"decoded_preds: {decoded_preds}")
             for j, pred in enumerate(decoded_preds):
                 test_cer.append(cer(decoded_targets[j], pred))
                 test_wer.append(wer(decoded_targets[j], pred))
@@ -155,10 +157,10 @@ def run(
 
     # load dataset
     train_dataset = MLSDataset(
-        dataset_path, language, Split.TRAIN, download=True, spectrogram_hparams=None, limited=True
+        dataset_path, language, Split.TRAIN, download=False, spectrogram_hparams=None, limited=True
     )
     valid_dataset = MLSDataset(
-        dataset_path, language, Split.VALID, download=True, spectrogram_hparams=None, limited=True
+        dataset_path, language, Split.VALID, download=False, spectrogram_hparams=None, limited=True
     )
 
     # load tokenizer (bpe by default):
@@ -196,14 +198,14 @@ def run(
         train_dataset,
         batch_size=hparams["batch_size"],
         shuffle=True,
-        collate_fn=lambda x: collate_fn(x),
+        collate_fn=lambda x: collate_fn(x, tokenizer.encode(" ").ids[0]),
     )
 
     valid_loader = DataLoader(
         valid_dataset,
         batch_size=hparams["batch_size"],
         shuffle=True,
-        collate_fn=lambda x: collate_fn(x),
+        collate_fn=lambda x: collate_fn(x, tokenizer.encode(" ").ids[0]),
     )
 
     # enable flag to find the most compatible algorithms in advance

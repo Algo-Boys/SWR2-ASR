@@ -1,7 +1,7 @@
 """Class containing utils for the ASR system."""
 import os
 from enum import Enum
-from typing import TypedDict
+from typing import TypedDict, Union
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -354,11 +354,14 @@ class MLSDataset(Dataset):
         )
 
 
-def collate_fn(samples: list[Sample]) -> dict:
+def collate_fn(samples: list[Sample], padding_id: Union[float, int]) -> dict:
     """Collate function for the dataloader
 
     pads all tensors within a batch to the same dimensions
     """
+    if isinstance(padding_id, int):
+        padding_id = float(padding_id)
+
     waveforms = []
     spectrograms = []
     labels = []
@@ -399,19 +402,27 @@ if __name__ == "__main__":
     dataset.set_tokenizer(tok)
 
 
-def plot(epochs, path):
+def plot(epochs, path, title):
     """Plots the losses over the epochs"""
     losses = list()
     test_losses = list()
     cers = list()
     wers = list()
     for epoch in range(1, epochs + 1):
-        current_state = torch.load(path + str(epoch))
+        current_state = torch.load(path + str(epoch), map_location=torch.device("cpu"))
         losses.append(current_state["loss"])
         test_losses.append(current_state["test_loss"])
         cers.append(current_state["avg_cer"])
         wers.append(current_state["avg_wer"])
 
+    # plot losses and cers
     plt.plot(losses)
+
     plt.plot(test_losses)
+    plt.plot(cers)
+    plt.plot(wers)
+
+    plt.legend(["train loss", "test loss", "cer (test)", "wer (tes)"])
+    plt.title(title)
+
     plt.savefig("losses.svg")
