@@ -1,4 +1,4 @@
-# SWR2-ACR
+# SWR2-ASR
 
 Automatic speech recognition model for the seminar spoken word
 recogniton 2 (SWR2) in the summer term 2023.
