@@ -11,7 +11,7 @@ from tqdm import tqdm
 
 from swr2_asr.model_deep_speech import SpeechRecognitionModel
 from swr2_asr.tokenizer import CharTokenizer, train_char_tokenizer
-from swr2_asr.utils import MLSDataset, Split, collate_fn
+from swr2_asr.utils import MLSDataset, Split, collate_fn,plot
 
 from .loss_scores import cer, wer
 
@@ -268,6 +268,7 @@ def run(
                 "avg_wer": avg_wer,
             },
             path + str(epoch),
+    plot(epochs,path)
         )
 
 
