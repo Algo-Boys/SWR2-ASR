@@ -4,7 +4,7 @@ model:
   rnn_dim: 512
   n_feats: 128 # number of mel features
   stride: 2
-  dropout: 0.25 # recommended to be around 0.4 for smaller datasets, 0.1 for really large datasets
+  dropout: 0.25 # recommended to be around 0.4-0.6 for smaller datasets, 0.1 for really large datasets
 
 training:
   learning_rate: 0.0005

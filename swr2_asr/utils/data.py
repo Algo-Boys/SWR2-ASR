@@ -15,18 +15,19 @@ from swr2_asr.utils.tokenizer import CharTokenizer
 class DataProcessing:
     """Data processing class for the dataloader"""
 
-    def __init__(self, data_type: str, tokenizer: CharTokenizer):
+    def __init__(self, data_type: str, tokenizer: CharTokenizer, hparams: dict):
         self.data_type = data_type
         self.tokenizer = tokenizer
+        n_features = hparams["n_feats"]
 
         if data_type == "train":
             self.audio_transform = torch.nn.Sequential(
-                torchaudio.transforms.MelSpectrogram(sample_rate=16000, n_mels=128),
+                torchaudio.transforms.MelSpectrogram(sample_rate=16000, n_mels=n_features),
                 torchaudio.transforms.FrequencyMasking(freq_mask_param=30),
                 torchaudio.transforms.TimeMasking(time_mask_param=100),
             )
         elif data_type == "valid":
-            self.audio_transform = torchaudio.transforms.MelSpectrogram()
+            self.audio_transform = torchaudio.transforms.MelSpectrogram(n_mels=n_features)
 
     def __call__(self, data) -> tuple[Tensor, Tensor, list, list]:
         spectrograms = []

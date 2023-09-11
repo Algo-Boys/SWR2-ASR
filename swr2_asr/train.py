@@ -223,8 +223,8 @@ def main(config_path: str):
         )
     tokenizer = CharTokenizer.from_file(tokenizer_config["tokenizer_path"])
 
-    train_data_processing = DataProcessing("train", tokenizer)
-    valid_data_processing = DataProcessing("valid", tokenizer)
+    train_data_processing = DataProcessing("train", tokenizer, {"n_feats": model_config["n_feats"]})
+    valid_data_processing = DataProcessing("valid", tokenizer, {"n_feats": model_config["n_feats"]})
 
     train_loader = DataLoader(
         dataset=train_dataset,
