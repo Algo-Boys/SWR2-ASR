@@ -44,6 +44,7 @@ class CharTokenizer:
         ü
         -
         '
+        
         """
 
         self.char_map = {}
