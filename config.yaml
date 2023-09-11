@@ -4,7 +4,7 @@ model:
   rnn_dim: 512
   n_feats: 128 # number of mel features
   stride: 2
-  dropout: 0.25 # recommended to be around 0.4 for smaller datasets, 0.1 for really large datasets
+  dropout: 0.3 # recommended to be around 0.4 for smaller datasets, 0.1 for really large datasets
 
 training:
   learning_rate: 5e-4
@@ -19,6 +19,7 @@ dataset:
   language_name: "mls_german_opus"
   limited_supervision: False # set to True if you want to use limited supervision
   dataset_percentage: 1.0 # percentage of dataset to use (1.0 = 100%)
+  shuffle: True
 
 tokenizer:
   tokenizer_path: "data/tokenizers/char_tokenizer_german.yaml"
@@ -26,3 +27,8 @@ tokenizer:
 checkpoints:
   model_load_path: "YOUR/PATH" # path to load model from
   model_save_path: "YOUR/PATH" # path to save model to
+
+inference:
+  model_load_path: "YOUR/PATH" # path to load model from
+  beam_width: 10 # beam width for beam search
+  device: "cuda" # device to run inference on if gpu is available, else "cpu" will be set automatically

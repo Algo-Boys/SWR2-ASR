@@ -263,7 +263,7 @@ def main(config_path: str):
     prev_epoch = 0
 
     if checkpoints_config["model_load_path"] is not None:
-        checkpoint = torch.load(checkpoints_config["model_load_path"])
+        checkpoint = torch.load(checkpoints_config["model_load_path"], map_location=device)
         model.load_state_dict(checkpoint["model_state_dict"])
         optimizer.load_state_dict(checkpoint["optimizer_state_dict"])
         prev_epoch = checkpoint["epoch"]

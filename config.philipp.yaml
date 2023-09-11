@@ -12,6 +12,7 @@ training:
   epochs: 3 
   eval_every_n: 1 # evaluate every n epochs
   num_workers: 4 # number of workers for dataloader
+  device: "cuda" # device to run inference on if gpu is available, else "cpu" will be set automatically
 
 dataset:
   download: True
@@ -25,5 +26,9 @@ tokenizer:
   tokenizer_path: "data/tokenizers/char_tokenizer_german.json"
 
 checkpoints:
-  model_load_path: ~ # path to load model from
+  model_load_path: "data/runs/epoch30" # path to load model from
   model_save_path: ~ # path to save model to
+
+inference:
+  model_load_path: "data/runs/epoch30" # path to load model from
+  device: "cuda" # device to run inference on if gpu is available, else "cpu" will be set automatically
