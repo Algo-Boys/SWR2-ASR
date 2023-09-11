@@ -1,7 +1,7 @@
 # Training files
 data/*
 !data/tokenizers
-
+!data/own
 
 # Mac
 **/.DS_Store
