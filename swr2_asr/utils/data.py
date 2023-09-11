@@ -123,9 +123,9 @@ class MLSDataset(Dataset):
         self,
         dataset_path: str,
         language: str,
-        split: Split,
-        limited: bool,
-        download: bool,
+        split: Split,  # pylint: disable=redefined-outer-name
+        limited: bool = False,
+        download: bool = True,
         size: float = 0.2,
     ):
         """Initializes the dataset"""
@@ -365,7 +365,28 @@ class MLSDataset(Dataset):
 
 
 if __name__ == "__main__":
+    from torch.utils.data import DataLoader
+
     DATASET_PATH = "/Volumes/pherkel/SWR2-ASR"
     LANGUAGE = "mls_german_opus"
-    split = Split.TRAIN
+    split = Split.DEV
     DOWNLOAD = False
+
+    dataset = MLSDataset(DATASET_PATH, LANGUAGE, split, download=DOWNLOAD)
+
+    dataloader = DataLoader(
+        dataset,
+        batch_size=1,
+        shuffle=True,
+        collate_fn=DataProcessing(
+            "train", CharTokenizer.from_file("data/tokenizers/char_tokenizer_german.json")
+        ),
+    )
+
+    for batch in dataloader:
+        print(batch)
+        break
+
+    print(len(dataset))
+
+    print(dataset[0])
