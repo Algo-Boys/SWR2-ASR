@@ -76,20 +76,6 @@ def split_to_mls_split(split_name: Split) -> MLSSplit:
     return split_name  # type: ignore
 
 
-class Sample(TypedDict):
-    """Type for a sample in the dataset"""
-
-    waveform: torch.Tensor
-    spectrogram: torch.Tensor
-    input_length: int
-    utterance: torch.Tensor
-    utterance_length: int
-    sample_rate: int
-    speaker_id: str
-    book_id: str
-    chapter_id: str
-
-
 class MLSDataset(Dataset):
     """Custom Dataset for reading Multilingual LibriSpeech
 
