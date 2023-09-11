@@ -1,13 +1,12 @@
 """Class containing utils for the ASR system."""
 import os
 from enum import Enum
-from typing import TypedDict
 
 import numpy as np
 import torch
 import torchaudio
 from torch import Tensor, nn
-from torch.utils.data import Dataset
+from torch.utils.data import DataLoader, Dataset
 from torchaudio.datasets.utils import _extract_tar
 
 from swr2_asr.utils.tokenizer import CharTokenizer
@@ -125,7 +124,7 @@ class MLSDataset(Dataset):
 
         self._handle_download_dataset(download)
         self._validate_local_directory()
-        if limited and (split == Split.TRAIN or split == Split.VALID):
+        if limited and split in (Split.TRAIN, Split.VALID):
             self.initialize_limited()
         else:
             self.initialize()
@@ -351,8 +350,6 @@ class MLSDataset(Dataset):
 
 
 if __name__ == "__main__":
-    from torch.utils.data import DataLoader
-
     DATASET_PATH = "/Volumes/pherkel/SWR2-ASR"
     LANGUAGE = "mls_german_opus"
     split = Split.DEV

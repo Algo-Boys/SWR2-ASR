@@ -1,11 +1,12 @@
 """Training script for the ASR model."""
-import torch
-import torchaudio
-import torch.nn.functional as F
 from typing import TypedDict
 
-from swr2_asr.tokenizer import CharTokenizer
+import torch
+import torch.nn.functional as F
+import torchaudio
+
 from swr2_asr.model_deep_speech import SpeechRecognitionModel
+from swr2_asr.utils.tokenizer import CharTokenizer
 
 
 class HParams(TypedDict):
@@ -28,8 +29,7 @@ def greedy_decoder(output, tokenizer, collapse_repeated=True):
     arg_maxes = torch.argmax(output, dim=2)  # pylint: disable=no-member
     blank_label = tokenizer.encode(" ").ids[0]
     decodes = []
-    targets = []
-    for i, args in enumerate(arg_maxes):
+    for _i, args in enumerate(arg_maxes):
         decode = []
         for j, index in enumerate(args):
             if index != blank_label:
@@ -44,7 +44,7 @@ def main() -> None:
     """inference function."""
 
     device = "cuda" if torch.cuda.is_available() else "cpu"
-    device = torch.device(device)
+    device = torch.device(device)  # pylint: disable=no-member
 
     tokenizer = CharTokenizer.from_file("char_tokenizer_german.json")
 
@@ -90,7 +90,7 @@ def main() -> None:
     model.load_state_dict(state_dict)
 
     # waveform, sample_rate = torchaudio.load("test.opus")
-    waveform, sample_rate = torchaudio.load("marvin_rede.flac")
+    waveform, sample_rate = torchaudio.load("marvin_rede.flac")  # pylint: disable=no-member
     if sample_rate != spectrogram_hparams["sample_rate"]:
         resampler = torchaudio.transforms.Resample(sample_rate, spectrogram_hparams["sample_rate"])
         waveform = resampler(waveform)
@@ -103,7 +103,7 @@ def main() -> None:
     specs = [spec]
     specs = torch.nn.utils.rnn.pad_sequence(specs, batch_first=True).unsqueeze(1).transpose(2, 3)
 
-    output = model(specs)
+    output = model(specs)  # pylint: disable=not-callable
     output = F.log_softmax(output, dim=2)
     output = output.transpose(0, 1)  # (time, batch, n_class)
     decodes = greedy_decoder(output, tokenizer)

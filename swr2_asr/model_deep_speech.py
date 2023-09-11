@@ -3,25 +3,8 @@
 Following definition by Assembly AI 
 (https://www.assemblyai.com/blog/end-to-end-speech-recognition-pytorch/)
 """
-from typing import TypedDict
-
 import torch.nn.functional as F
 from torch import nn
-
-
-class HParams(TypedDict):
-    """Type for the hyperparameters of the model."""
-
-    n_cnn_layers: int
-    n_rnn_layers: int
-    rnn_dim: int
-    n_class: int
-    n_feats: int
-    stride: int
-    dropout: float
-    learning_rate: float
-    batch_size: int
-    epochs: int
 
 
 class CNNLayerNorm(nn.Module):

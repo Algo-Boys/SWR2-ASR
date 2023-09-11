@@ -1,8 +1,6 @@
 """Tokenizer for Multilingual Librispeech datasets"""
-
-
-from datetime import datetime
 import os
+from datetime import datetime
 
 from tqdm.autonotebook import tqdm
 
@@ -119,8 +117,8 @@ class CharTokenizer:
                 line = line.strip()
                 if line:
                     char, index = line.split()
-                    tokenizer.char_map[char] = int(index)
-                    tokenizer.index_map[int(index)] = char
+                    load_tokenizer.char_map[char] = int(index)
+                    load_tokenizer.index_map[int(index)] = char
         return load_tokenizer
 
 
