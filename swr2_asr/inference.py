@@ -66,9 +66,9 @@ def main(config_path: str, file_path: str) -> None:
     ).to(device)
 
     checkpoint = torch.load(inference_config["model_load_path"], map_location=device)
-    print(checkpoint["model_state_dict"].keys())
-    model.load_state_dict(checkpoint["model_state_dict"], strict=False)
+    model.load_state_dict(checkpoint["model_state_dict"], strict=True)
     model.eval()
+
     waveform, sample_rate = torchaudio.load(file_path)  # pylint: disable=no-member
     if waveform.shape[0] != 1:
         waveform = waveform[1]
