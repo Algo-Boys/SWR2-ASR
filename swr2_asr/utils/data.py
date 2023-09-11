@@ -134,11 +134,6 @@ class MLSDataset(Dataset):
 
     def initialize_limited(self) -> None:
         """Initializes the limited supervision dataset"""
-        # get file handles
-        # get file paths
-        # get transcripts
-        # create train or validation split
-
         handles = set()
 
         train_root_path = os.path.join(self.dataset_path, self.language, "train")
@@ -348,29 +343,3 @@ class MLSDataset(Dataset):
             dataset_lookup_entry["chapterid"],
             idx,
         )  # type: ignore
-
-
-if __name__ == "__main__":
-    DATASET_PATH = "/Volumes/pherkel/SWR2-ASR"
-    LANGUAGE = "mls_german_opus"
-    split = Split.DEV
-    DOWNLOAD = False
-
-    dataset = MLSDataset(DATASET_PATH, LANGUAGE, split, download=DOWNLOAD)
-
-    dataloader = DataLoader(
-        dataset,
-        batch_size=1,
-        shuffle=True,
-        collate_fn=DataProcessing(
-            "train", CharTokenizer.from_file("data/tokenizers/char_tokenizer_german.json")
-        ),
-    )
-
-    for batch in dataloader:
-        print(batch)
-        break
-
-    print(len(dataset))
-
-    print(dataset[0])

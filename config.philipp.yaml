@@ -4,30 +4,30 @@ model:
   rnn_dim: 512
   n_feats: 128 # number of mel features
   stride: 2
-  dropout: 0.25 # recommended to be around 0.4-0.6 for smaller datasets, 0.1 for really large datasets
+  dropout: 0.2 # recommended to be around 0.4-0.6 for smaller datasets, 0.1 for really large datasets
 
 training:
   learning_rate: 0.0005
-  batch_size: 2 # recommended to maximum number that fits on the GPU (batch size of 32 fits on a 12GB GPU)
-  epochs: 3 
-  eval_every_n: 1 # evaluate every n epochs
+  batch_size: 32 # recommended to maximum number that fits on the GPU (batch size of 32 fits on a 12GB GPU)
+  epochs: 150 
+  eval_every_n: 5 # evaluate every n epochs
   num_workers: 4 # number of workers for dataloader
   device: "cuda" # device to run inference on if gpu is available, else "cpu" will be set automatically
 
 dataset:
-  download: True
-  dataset_root_path: "/Volumes/pherkel 1/SWR2-ASR" # files will be downloaded into this dir
+  download: true
+  dataset_root_path: "data" # files will be downloaded into this dir
   language_name: "mls_german_opus"
-  limited_supervision: True # set to True if you want to use limited supervision
-  dataset_percentage: 0.01 # percentage of dataset to use (1.0 = 100%)
-  shuffle: True
+  limited_supervision: false # set to True if you want to use limited supervision
+  dataset_percentage: 1 # percentage of dataset to use (1.0 = 100%)
+  shuffle: true
 
 tokenizer:
   tokenizer_path: "data/tokenizers/char_tokenizer_german.json"
 
 checkpoints:
-  model_load_path: "data/runs/epoch30" # path to load model from
-  model_save_path: ~ # path to save model to
+  model_load_path: "data/runs/epoch31" # path to load model from
+  model_save_path: "data/runs/epoch" # path to save model to
 
 inference:
   model_load_path: "data/runs/epoch30" # path to load model from

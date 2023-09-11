@@ -120,15 +120,3 @@ class CharTokenizer:
                     load_tokenizer.char_map[char] = int(index)
                     load_tokenizer.index_map[int(index)] = char
         return load_tokenizer
-
-
-if __name__ == "__main__":
-    tokenizer = CharTokenizer.train("/Volumes/pherkel 1/SWR2-ASR", "mls_german_opus")
-    print(tokenizer.char_map)
-    print(tokenizer.index_map)
-    print(tokenizer.get_vocab_size())
-    print(tokenizer.get_blank_token())
-    print(tokenizer.get_unk_token())
-    print(tokenizer.get_space_token())
-    print(tokenizer.encode("hallo welt"))
-    print(tokenizer.decode([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]))

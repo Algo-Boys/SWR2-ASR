@@ -187,16 +187,14 @@ def main(config_path: str):
     dataset_config = config_dict.get("dataset", {})
     tokenizer_config = config_dict.get("tokenizer", {})
     checkpoints_config = config_dict.get("checkpoints", {})
-
-    print(training_config["learning_rate"])
-
+    
     if not os.path.isdir(dataset_config["dataset_root_path"]):
         os.makedirs(dataset_config["dataset_root_path"])
 
     train_dataset = MLSDataset(
         dataset_config["dataset_root_path"],
         dataset_config["language_name"],
-        Split.TEST,
+        Split.TRAIN,
         download=dataset_config["download"],
         limited=dataset_config["limited_supervision"],
         size=dataset_config["dataset_percentage"],
@@ -204,7 +202,7 @@ def main(config_path: str):
     valid_dataset = MLSDataset(
         dataset_config["dataset_root_path"],
         dataset_config["language_name"],
-        Split.TRAIN,
+        Split.TEST,
         download=dataset_config["download"],
         limited=dataset_config["limited_supervision"],
         size=dataset_config["dataset_percentage"],
