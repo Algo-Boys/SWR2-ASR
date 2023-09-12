@@ -1,14 +1,14 @@
 {
-    "[python]": {
-        "editor.formatOnType": true,
-        "editor.defaultFormatter": "ms-python.black-formatter",
-        "editor.formatOnSave": true,
-        "editor.rulers": [88, 120],
-    },
-    "black-formatter.importStrategy": "fromEnvironment",
-    "python.analysis.typeCheckingMode": "basic",
-    "ruff.organizeImports": true,
-    "ruff.importStrategy": "fromEnvironment",
-    "ruff.fixAll": true,
-    "ruff.run": "onType"
+  "[python]": {
+    "editor.formatOnType": true,
+    "editor.defaultFormatter": "ms-python.black-formatter",
+    "editor.formatOnSave": true,
+    "editor.rulers": [88, 120]
+  },
+  "black-formatter.importStrategy": "fromEnvironment",
+  "python.analysis.typeCheckingMode": "off",
+  "ruff.organizeImports": true,
+  "ruff.importStrategy": "fromEnvironment",
+  "ruff.fixAll": true,
+  "ruff.run": "onType"
 }
