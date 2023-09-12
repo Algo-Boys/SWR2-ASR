@@ -187,7 +187,7 @@ def main(config_path: str):
     dataset_config = config_dict.get("dataset", {})
     tokenizer_config = config_dict.get("tokenizer", {})
     checkpoints_config = config_dict.get("checkpoints", {})
-    
+
     if not os.path.isdir(dataset_config["dataset_root_path"]):
         os.makedirs(dataset_config["dataset_root_path"])
 
