@@ -24,3 +24,4 @@ def greedy_decoder(output, labels, label_lengths, tokenizer: CharTokenizer, coll
 
 
 # TODO: add beam search decoder
+

@@ -120,3 +120,9 @@ class CharTokenizer:
                     load_tokenizer.char_map[char] = int(index)
                     load_tokenizer.index_map[int(index)] = char
         return load_tokenizer
+    
+    def create_txt(self,path:str):
+      with open(path, 'w',encoding="utf-8") as file:
+        for key,value in self.char_map():
+           file.write(f"{key}\n")
+        
