@@ -67,6 +67,9 @@ cover/
 *.mo
 *.pot
 
+#Model
+YOUR
+
 # Django stuff:
 *.log
 local_settings.py

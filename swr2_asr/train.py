@@ -15,7 +15,7 @@ from swr2_asr.utils.data import DataProcessing, MLSDataset, Split
 from swr2_asr.utils.decoder import greedy_decoder
 from swr2_asr.utils.tokenizer import CharTokenizer
 
-from .utils.loss_scores import cer, wer
+from swr2_asr.utils.loss_scores import cer, wer
 
 
 class IterMeter:
