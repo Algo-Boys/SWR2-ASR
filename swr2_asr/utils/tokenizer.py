@@ -121,6 +121,8 @@ class CharTokenizer:
                     load_tokenizer.index_map[int(index)] = char
         return load_tokenizer
     
+
+    #TO DO check about the weird unknown tokens etc.
     def create_txt(self,path:str):
       with open(path, 'w',encoding="utf-8") as file:
         for key,value in self.char_map():
