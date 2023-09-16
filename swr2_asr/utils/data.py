@@ -343,3 +343,24 @@ class MLSDataset(Dataset):
             dataset_lookup_entry["chapterid"],
             idx,
         )  # type: ignore
+    
+    def create_lexicon(vocab_counts_path, lexicon_path):
+      
+        words_list = []  
+        with open(vocab_counts_path, 'r') as file:
+            for line in file:
+               
+                words = line.split()
+                if len(words) >= 1:
+                   
+                    word = words[0]
+                    words_list.append(word)
+        
+        with open(lexicon_path, 'w') as file:
+            for word in words_list:
+                file.write(f"{word} ")
+                for char in word:
+                    file.write(char + ' ')
+                file.write("|")
+                        
+    
