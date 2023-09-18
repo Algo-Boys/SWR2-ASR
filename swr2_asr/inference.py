@@ -1,4 +1,6 @@
 """Training script for the ASR model."""
+from typing import Union
+
 import click
 import torch
 import torch.nn.functional as F
@@ -7,6 +9,7 @@ import yaml
 
 from swr2_asr.model_deep_speech import SpeechRecognitionModel
 from swr2_asr.utils.decoder import decoder_factory
+from swr2_asr.utils.loss_scores import wer
 from swr2_asr.utils.tokenizer import CharTokenizer
 
 
@@ -22,7 +25,12 @@ from swr2_asr.utils.tokenizer import CharTokenizer
     help="Path to audio file",
     type=click.Path(exists=True),
 )
-def main(config_path: str, file_path: str) -> None:
+# optional arguments
+@click.option(
+    "--target_path",
+    help="Path to target text file",
+)
+def main(config_path: str, file_path: str, target_path: Union[str, None] = None) -> None:
     """inference function."""
     with open(config_path, "r", encoding="utf-8") as yaml_file:
         config_dict = yaml.safe_load(yaml_file)
@@ -89,7 +97,26 @@ def main(config_path: str, file_path: str) -> None:
     preds = decoder(output)
     preds = " ".join(preds[0][0].words).strip()
 
-    print(preds)
+    if target_path is not None:
+        with open(target_path, "r", encoding="utf-8") as target_file:
+            target = target_file.read()
+            target = target.lower()
+            target = target.replace("«", "")
+            target = target.replace("»", "")
+            target = target.replace(",", "")
+            target = target.replace(".", "")
+            target = target.replace("?", "")
+            target = target.replace("!", "")
+
+        print("---------")
+        print(f"Prediction:\n\{preds}")
+        print("---------")
+        print(f"Target:\n{target}")
+        print("---------")
+        print(f"WER: {wer(preds, target)}")
+
+    else:
+        print(f"Prediction:\n{preds}")
 
 
 if __name__ == "__main__":

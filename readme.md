@@ -54,6 +54,13 @@ We include a pre-trained character-level tokenizer for the german language in th
 
 If the path to the tokenizer you specified in the `config.yaml` file does not exist or is None (~), a new tokenizer will be trained on the training data.
 
+## Decoder :
+There are two options for the decoder:
+- greedy
+- beam search with language model
+
+The language model is a KenLM model and supplied by the multi-lingual librispeech dataset. If you want to use a different KenLM language model, you can specify the path to the language model in the `config.yaml` file.
+
 ## Training the model
 
 All hyperparameters can be configured in the `config.yaml` file. The main sections are:
@@ -80,10 +87,7 @@ To run inference on a single audio file, run:
 
     poetry run recognize \
     --config_path="PATH_TO_CONFIG_FILE" \
-    --file_path="PATH_TO_AUDIO_FILE"
+    --file_path="PATH_TO_AUDIO_FILE" \
+    --target_path="PATH_TO_TARGET_FILE"
 
-##Changing the decoder :
-We give you the option of decoding the emissions with a greedy decoder or a CTC decoder that is supported by a KEN-LM
-  
-  to switch go into the config.yaml and change the constant to the fitting option
-    
+Target path is optional. If not specified, the recognized text will be printed to the console. Otherwise, a wer will be computed.
