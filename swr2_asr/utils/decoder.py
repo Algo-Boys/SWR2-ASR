@@ -98,7 +98,8 @@ class GreedyDecoder:
         if greedy_type == "inference":
             res = self.inference(output)
 
-        res = [[DecoderOutput(words=res)]]
+        res = [x.split(" ") for x in res]
+        res = [[DecoderOutput(x)] for x in res]
         return res
 
     def train(self, output, labels, label_lengths):

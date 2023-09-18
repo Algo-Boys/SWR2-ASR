@@ -142,8 +142,10 @@ def test(test_args: TestArgs) -> tuple[float, float, float]:
             for j, _ in enumerate(decoded_preds):
                 if j >= len(decoded_targets):
                     break
-                test_cer.append(cer(decoded_targets[j], decoded_preds[j][0].words[0]))
-                test_wer.append(wer(decoded_targets[j], decoded_preds[j][0].words[0]))
+                pred = " ".join(decoded_preds[j][0].words).strip()  # batch, top, words
+                target = decoded_targets[j]
+                test_cer.append(cer(target, pred))
+                test_wer.append(wer(target, pred))
 
     avg_cer = sum(test_cer) / len(test_cer)
     avg_wer = sum(test_wer) / len(test_wer)

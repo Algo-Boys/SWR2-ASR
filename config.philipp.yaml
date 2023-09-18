@@ -18,7 +18,7 @@ tokenizer:
   tokenizer_path: "data/tokenizers/char_tokenizer_german.json"
 
 decoder:
-  type: "lm" # greedy, or lm (beam search)
+  type: "greedy" # greedy, or lm (beam search)
   
   lm: # config for lm decoder
     language_model_path: "data" # path where model and supplementary files are stored
