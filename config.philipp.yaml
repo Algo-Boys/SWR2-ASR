@@ -27,8 +27,8 @@ decoder:
     beam_size: 500 
     beam_threshold: 150
     n_best: 1
-    lm_weight: 2
-    word_score: -2
+    lm_weight: 1
+    word_score: 1
 
 training:
   learning_rate: 0.0005
