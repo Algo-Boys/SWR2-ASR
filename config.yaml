@@ -7,11 +7,12 @@ model:
   dropout: 0.3 # recommended to be around 0.4 for smaller datasets, 0.1 for really large datasets
 
 training:
-  learning_rate: 5e-4
+  learning_rate: 0.0005 # between 0.0001 and 0.0006 seems to work well
   batch_size: 8 # recommended to maximum number that fits on the GPU (batch size of 32 fits on a 12GB GPU)
   epochs: 3 
-  eval_every_n: 3 # evaluate every n epochs
+  eval_every_n: 1 # evaluate every n epochs, set to 0 to disable
   num_workers: 8 # number of workers for dataloader
+  device: "cpu" # device to run on if gpu is available, else "cpu" will be set automatically
 
 dataset:
   download: True
@@ -22,9 +23,11 @@ dataset:
   shuffle: True
 
 tokenizer:
+  # use "~"" to train a new tokenizer
   tokenizer_path: "data/tokenizers/char_tokenizer_german.yaml"
 
 checkpoints:
+  # use "~"" to disable loading/saving
   model_load_path: "YOUR/PATH" # path to load model from
   model_save_path: "YOUR/PATH" # path to save model to
 
