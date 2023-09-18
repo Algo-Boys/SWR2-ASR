@@ -32,3 +32,6 @@ inference:
   model_load_path: "YOUR/PATH" # path to load model from
   beam_width: 10 # beam width for beam search
   device: "cuda" # device to run inference on if gpu is available, else "cpu" will be set automatically
+
+lang_model:
+  path: "data/mls_lm_german" #path where model and supplementary files are stored

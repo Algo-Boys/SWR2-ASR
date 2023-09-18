@@ -344,7 +344,7 @@ class MLSDataset(Dataset):
             idx,
         )  # type: ignore
     
-    def create_lexicon(vocab_counts_path, lexicon_path):
+def create_lexicon(vocab_counts_path, lexicon_path):
       
         words_list = []  
         with open(vocab_counts_path, 'r') as file:
@@ -361,6 +361,8 @@ class MLSDataset(Dataset):
                 file.write(f"{word} ")
                 for char in word:
                     file.write(char + ' ')
-                file.write("|")
+                file.write("<SPACE>")
+
+
                         
     
