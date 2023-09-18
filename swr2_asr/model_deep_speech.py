@@ -11,7 +11,7 @@ class CNNLayerNorm(nn.Module):
     """Layer normalization built for cnns input"""
 
     def __init__(self, n_feats):
-        super(CNNLayerNorm, self).__init__()
+        super().__init__()
         self.layer_norm = nn.LayerNorm(n_feats)
 
     def forward(self, data):
@@ -27,7 +27,7 @@ class ResidualCNN(nn.Module):
     """
 
     def __init__(self, in_channels, out_channels, kernel, stride, dropout, n_feats):
-        super(ResidualCNN, self).__init__()
+        super().__init__()
 
         self.cnn1 = nn.Conv2d(in_channels, out_channels, kernel, stride, padding=kernel // 2)
         self.cnn2 = nn.Conv2d(out_channels, out_channels, kernel, stride, padding=kernel // 2)
@@ -55,7 +55,7 @@ class BidirectionalGRU(nn.Module):
     """Bidirectional GRU layer"""
 
     def __init__(self, rnn_dim, hidden_size, dropout, batch_first):
-        super(BidirectionalGRU, self).__init__()
+        super().__init__()
 
         self.BiGRU = nn.GRU(  # pylint: disable=invalid-name
             input_size=rnn_dim,
@@ -82,7 +82,7 @@ class SpeechRecognitionModel(nn.Module):
     def __init__(
         self, n_cnn_layers, n_rnn_layers, rnn_dim, n_class, n_feats, stride=2, dropout=0.1
     ):
-        super(SpeechRecognitionModel, self).__init__()
+        super().__init__()
         n_feats = n_feats // 2
         self.cnn = nn.Conv2d(
             1, 32, 3, stride=stride, padding=3 // 2

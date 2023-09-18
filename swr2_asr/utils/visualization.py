@@ -14,7 +14,9 @@ def plot(path):
     epoch = 5
     while True:
         try:
-            current_state = torch.load(path + str(epoch), map_location=torch.device("cpu"))
+            current_state = torch.load(
+                path + str(epoch), map_location=torch.device("cpu")
+            )  # pylint: disable=no-member
         except FileNotFoundError:
             break
         train_losses.append((epoch, current_state["train_loss"].item()))

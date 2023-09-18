@@ -109,7 +109,7 @@ def main(config_path: str, file_path: str, target_path: Union[str, None] = None)
             target = target.replace("!", "")
 
         print("---------")
-        print(f"Prediction:\n\{preds}")
+        print(f"Prediction:\n{preds}")
         print("---------")
         print(f"Target:\n{target}")
         print("---------")
