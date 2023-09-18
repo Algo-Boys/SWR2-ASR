@@ -76,11 +76,6 @@ Train using the provided train script:
     poetry run train \
     --config_path="PATH_TO_CONFIG_FILE"
 
-## Evaluation
-Evaluation metrics are computed during training and are serialized with the checkpoints.
-
-TODO: manual evaluation script / access to the evaluation metrics?
-
 ## Inference
 The `config.yaml` also includes a section for inference. 
 To run inference on a single audio file, run:
