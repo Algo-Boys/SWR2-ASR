@@ -360,4 +360,4 @@ def create_lexicon(vocab_counts_path, lexicon_path):
             file.write(f"{word} ")
             for char in word:
                 file.write(char + " ")
-            file.write("<SPACE>")
+            file.write("<SPACE>\n")

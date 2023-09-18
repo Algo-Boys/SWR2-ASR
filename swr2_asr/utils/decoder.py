@@ -52,9 +52,11 @@ def get_beam_search_decoder(
     )
 
     if not os.path.isdir(os.path.join(lang_model_path, f"mls_lm_{language}")):
-        url = f"https://dl.fbaipublicfiles.com/mls/mls_lm_{language}.tar.gz"
-        torch.hub.download_url_to_file(url, f"data/mls_lm_{language}.tar.gz")
-        _extract_tar("data/mls_lm_{language}.tar.gz", overwrite=True)
+        # check if zip file exists
+        if not os.path.isfile(f"data/mls_lm_{language}.tar.gz"):
+            url = f"https://dl.fbaipublicfiles.com/mls/mls_lm_{language}.tar.gz"
+            torch.hub.download_url_to_file(url, f"data/mls_lm_{language}.tar.gz")
+        _extract_tar(f"data/mls_lm_{language}.tar.gz", overwrite=True)
 
     tokens_path = os.path.join(lang_model_path, f"mls_lm_{language}", "tokens.txt")
     if not os.path.isfile(tokens_path):
