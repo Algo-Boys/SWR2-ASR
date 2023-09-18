@@ -6,7 +6,7 @@ import numpy as np
 import torch
 import torchaudio
 from torch import Tensor, nn
-from torch.utils.data import DataLoader, Dataset
+from torch.utils.data import Dataset
 from torchaudio.datasets.utils import _extract_tar
 
 from swr2_asr.utils.tokenizer import CharTokenizer
@@ -343,26 +343,21 @@ class MLSDataset(Dataset):
             dataset_lookup_entry["chapterid"],
             idx,
         )  # type: ignore
-    
+
+
 def create_lexicon(vocab_counts_path, lexicon_path):
-      
-        words_list = []  
-        with open(vocab_counts_path, 'r') as file:
-            for line in file:
-               
-                words = line.split()
-                if len(words) >= 1:
-                   
-                    word = words[0]
-                    words_list.append(word)
-        
-        with open(lexicon_path, 'w') as file:
-            for word in words_list:
-                file.write(f"{word} ")
-                for char in word:
-                    file.write(char + ' ')
-                file.write("<SPACE>")
+    """Create a lexicon from the vocab_counts.txt file"""
+    words_list = []
+    with open(vocab_counts_path, "r", encoding="utf-8") as file:
+        for line in file:
+            words = line.split()
+            if len(words) >= 1:
+                word = words[0]
+                words_list.append(word)
 
-
-                        
-    
+    with open(lexicon_path, "w", encoding="utf-8") as file:
+        for word in words_list:
+            file.write(f"{word} ")
+            for char in word:
+                file.write(char + " ")
+            file.write("<SPACE>")

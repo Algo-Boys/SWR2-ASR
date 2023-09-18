@@ -120,11 +120,9 @@ class CharTokenizer:
                     load_tokenizer.char_map[char] = int(index)
                     load_tokenizer.index_map[int(index)] = char
         return load_tokenizer
-    
 
-    #TO DO check about the weird unknown tokens etc.
-    def create_txt(self,path:str):
-      with open(path, 'w',encoding="utf-8") as file:
-        for key,value in self.char_map():
-           file.write(f"{key}\n")
-        
+    def create_tokens_txt(self, path: str):
+        """Create a txt file with all the characters"""
+        with open(path, "w", encoding="utf-8") as file:
+            for char, _ in self.char_map.items():
+                file.write(f"{char}\n")
