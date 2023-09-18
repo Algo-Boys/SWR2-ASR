@@ -2,15 +2,15 @@
 
 #SBATCH --job-name=swr-teamprojekt
 #SBATCH --partition=a100
-#SBATCH --time=00:30:00
+#SBATCH --time=24:00:00
 
 ### Note: --gres=gpu:x should equal to ntasks-per-node
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
-#SBATCH --gres=gpu:a100:1
-#SBATCH --cpus-per-task=8
-#SBATCH --mem=64gb
-#SBATCH --chdir=/mnt/lustre/mladm/mfa252/SWR2-cool-projekt-main/
+#SBATCH --gres=gpu:a100:4
+#SBATCH --cpus-per-task=16
+#SBATCH --mem=32gb
+#SBATCH --chdir=/mnt/lustre/mladm/mfa252/ref/
 #SBATCH --output=/mnt/lustre/mladm/mfa252/%x-%j.out
 
 source venv/bin/activate
