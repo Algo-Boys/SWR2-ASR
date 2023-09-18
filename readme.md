@@ -81,4 +81,9 @@ To run inference on a single audio file, run:
     poetry run recognize \
     --config_path="PATH_TO_CONFIG_FILE" \
     --file_path="PATH_TO_AUDIO_FILE"
+
+##Changing the decoder :
+We give you the option of decoding the emissions with a greedy decoder or a CTC decoder that is supported by a KEN-LM
+  
+  to switch go into the config.yaml and change the constant to the fitting option
     
