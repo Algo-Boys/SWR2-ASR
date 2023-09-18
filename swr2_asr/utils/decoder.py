@@ -1,6 +1,6 @@
 """Decoder for CTC-based ASR.""" ""
-from dataclasses import dataclass
 import os
+from dataclasses import dataclass
 
 import torch
 from torchaudio.datasets.utils import _extract_tar

@@ -3,7 +3,7 @@ dataset:
   dataset_root_path: "/Volumes/pherkel 2/SWR2-ASR" # files will be downloaded into this dir
   language_name: "mls_german_opus"
   limited_supervision: True # set to True if you want to use limited supervision
-  dataset_percentage: 0.15 # percentage of dataset to use (1.0 = 100%)
+  dataset_percentage: 0.01 # percentage of dataset to use (1.0 = 100%)
   shuffle: True
 
 model: 
@@ -33,13 +33,13 @@ decoder:
 training:
   learning_rate: 0.0005
   batch_size: 8 # recommended to maximum number that fits on the GPU (batch size of 32 fits on a 12GB GPU)
-  epochs: 3 
-  eval_every_n: 3 # evaluate every n epochs
+  epochs: 100
+  eval_every_n: 1 # evaluate every n epochs
   num_workers: 8 # number of workers for dataloader
 
 checkpoints: # use "~" to disable saving/loading
-  model_load_path: "YOUR/PATH" # path to load model from
-  model_save_path: "YOUR/PATH" # path to save model to
+  model_load_path: "data/epoch67" # path to load model from
+  model_save_path: ~ # path to save model to
 
 inference:
   model_load_path: "data/epoch67" # path to load model from

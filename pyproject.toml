@@ -35,7 +35,7 @@ target-version = "py310"
 line-length = 100
 
 [tool.poetry.scripts]
-train = "swr2_asr.train:run_cli"
+train = "swr2_asr.train:main"
 train-bpe-tokenizer = "swr2_asr.tokenizer:train_bpe_tokenizer"
 train-char-tokenizer = "swr2_asr.tokenizer:train_char_tokenizer"
 

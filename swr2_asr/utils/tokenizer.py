@@ -29,8 +29,16 @@ class CharTokenizer:
         """Use a character map and convert integer labels to an text sequence"""
         string = []
         for i in labels:
+            i = int(i)
             string.append(self.index_map[i])
         return "".join(string).replace("<SPACE>", " ")
+
+    def decode_batch(self, labels: list[list[int]]) -> list[str]:
+        """Use a character map and convert integer labels to an text sequence"""
+        string = []
+        for label in labels:
+            string.append(self.decode(label))
+        return string
 
     def get_vocab_size(self) -> int:
         """Get the number of unique characters in the dataset"""
