@@ -87,4 +87,4 @@ To run inference on a single audio file, run:
     --file_path="PATH_TO_AUDIO_FILE" \
     --target_path="PATH_TO_TARGET_FILE"
 
-Target path is optional. If not specified, the recognized text will be printed to the console. Otherwise, a wer will be computed.
+Target path is optional. If not specified, the recognized text will be printed to the console. Otherwise, a WER will be computed.
