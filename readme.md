@@ -54,7 +54,7 @@ We include a pre-trained character-level tokenizer for the german language in th
 
 If the path to the tokenizer you specified in the `config.yaml` file does not exist or is None (~), a new tokenizer will be trained on the training data.
 
-## Decoder :
+## Decoder
 There are two options for the decoder:
 - greedy
 - beam search with language model
