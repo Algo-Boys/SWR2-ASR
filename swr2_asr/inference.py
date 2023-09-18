@@ -6,23 +6,8 @@ import torchaudio
 import yaml
 
 from swr2_asr.model_deep_speech import SpeechRecognitionModel
+from swr2_asr.utils.decoder import decoder_factory
 from swr2_asr.utils.tokenizer import CharTokenizer
-
-
-def greedy_decoder(output, tokenizer: CharTokenizer, collapse_repeated=True):
-    """Greedily decode a sequence."""
-    arg_maxes = torch.argmax(output, dim=2)  # pylint: disable=no-member
-    blank_label = tokenizer.get_blank_token()
-    decodes = []
-    for args in arg_maxes:
-        decode = []
-        for j, index in enumerate(args):
-            if index != blank_label:
-                if collapse_repeated and j != 0 and index == args[j - 1]:
-                    continue
-                decode.append(index.item())
-        decodes.append(tokenizer.decode(decode))
-    return decodes
 
 
 @click.command()
@@ -46,11 +31,16 @@ def main(config_path: str, file_path: str) -> None:
     model_config = config_dict.get("model", {})
     tokenizer_config = config_dict.get("tokenizer", {})
     inference_config = config_dict.get("inference", {})
+    decoder_config = config_dict.get("decoder", {})
 
-    if inference_config["device"] == "cpu":
+    if inference_config.get("device", "") == "cpu":
         device = "cpu"
-    elif inference_config["device"] == "cuda":
+    elif inference_config.get("device", "") == "cuda":
         device = "cuda" if torch.cuda.is_available() else "cpu"
+    elif inference_config.get("device", "") == "mps":
+        device = "mps"
+    else:
+        device = "cpu"
     device = torch.device(device)  # pylint: disable=no-member
 
     tokenizer = CharTokenizer.from_file(tokenizer_config["tokenizer_path"])
@@ -90,11 +80,16 @@ def main(config_path: str, file_path: str) -> None:
     spec = spec.unsqueeze(0)
     spec = spec.transpose(1, 2)
     spec = spec.unsqueeze(0)
+    spec = spec.to(device)
     output = model(spec)  # pylint: disable=not-callable
     output = F.log_softmax(output, dim=2)  # (batch, time, n_class)
-    decoded_preds = greedy_decoder(output, tokenizer)
 
-    print(decoded_preds)
+    decoder = decoder_factory(decoder_config["type"])(tokenizer, decoder_config)
+
+    preds = decoder(output)
+    preds = " ".join(preds[0][0].words).strip()
+
+    print(preds)
 
 
 if __name__ == "__main__":
