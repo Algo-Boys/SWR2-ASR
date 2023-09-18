@@ -18,17 +18,17 @@ tokenizer:
   tokenizer_path: "data/tokenizers/char_tokenizer_german.json"
 
 decoder:
-  type: "greedy" # greedy, or lm (beam search)
+  type: "lm" # greedy, or lm (beam search)
   
   lm: # config for lm decoder
     language_model_path: "data" # path where model and supplementary files are stored
     language: "german"
-    n_gram: 3 # n-gram size of the language model, 3 or 5
-    beam_size: 50 
-    beam_threshold: 50
+    n_gram: 5 # n-gram size of the language model, 3 or 5
+    beam_size: 500 
+    beam_threshold: 150
     n_best: 1
-    lm_weight: 2
-    word_score: 0
+    lm_weight: 5
+    word_score: -1
 
 training:
   learning_rate: 0.0005
