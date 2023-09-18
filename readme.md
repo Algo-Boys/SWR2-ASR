@@ -76,6 +76,8 @@ Train using the provided train script:
     poetry run train \
     --config_path="PATH_TO_CONFIG_FILE"
 
+You can also find our model that was trained for 67 epochs on the mls_german_opus [here](https://drive.google.com/file/d/1gcgCjlCH6DjT6f7EWTx0LcYP3CCuXYP-/view?usp=sharing).
+
 ## Inference
 The `config.yaml` also includes a section for inference. 
 To run inference on a single audio file, run:
