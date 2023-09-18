@@ -1,7 +1,11 @@
+# pictures
+**/*.png
+
 # Training files
 data/*
 !data/tokenizers
 !data/own
+!data/metrics.csv
 
 # Mac
 **/.DS_Store
@@ -67,8 +71,7 @@ cover/
 *.mo
 *.pot
 
-#Model
-YOUR
+
 
 # Django stuff:
 *.log

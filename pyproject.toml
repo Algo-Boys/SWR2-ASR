@@ -18,12 +18,14 @@ tokenizers = "^0.13.3"
 click = "^8.1.7"
 matplotlib = "^3.7.2"
 pyyaml = "^6.0.1"
+pandas = "^2.1.0"
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.7.0"
 mypy = "^1.5.1"
 pylint = "^2.17.5"
 ruff = "^0.0.285"
+ipykernel = "^6.25.2"
 
 [tool.ruff]
 select = ["E", "F", "B", "I"]
@@ -35,9 +37,8 @@ target-version = "py310"
 line-length = 100
 
 [tool.poetry.scripts]
-train = "swr2_asr.train:run_cli"
-train-bpe-tokenizer = "swr2_asr.tokenizer:train_bpe_tokenizer"
-train-char-tokenizer = "swr2_asr.tokenizer:train_char_tokenizer"
+train = "swr2_asr.train:main"
+recognize = "swr2_asr.inference:main"
 
 [build-system]
 requires = ["poetry-core"]
