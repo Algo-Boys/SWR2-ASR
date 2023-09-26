@@ -4,7 +4,6 @@
 #SBATCH --partition=a100
 #SBATCH --time=24:00:00
 
-### Note: --gres=gpu:x should equal to ntasks-per-node
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
 #SBATCH --gres=gpu:a100:4
